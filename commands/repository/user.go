@@ -14,7 +14,7 @@ type RepositoryUserCommand struct {
 
 type RepositoryUserCommandFlags struct {
 	repository string
-	username   string
+	usernames  cli.StringSlice
 	permission string
 }
 
@@ -33,11 +33,10 @@ func (command *RepositoryUserCommand) GetCommand(fileCache *helper.FileCache) cl
 						Usage:       "The `<repository_name>` the user will be added on",
 						Destination: &command.flags.repository,
 					},
-					cli.StringFlag{
-						Name:        "username",
-						Value:       "git",
-						Usage:       "The `<username>` to be added on the repository.",
-						Destination: &command.flags.username,
+					cli.StringSliceFlag{
+						Name:  "username",
+						Usage: "The `<username>` to be added on the repository. Can be repeated multiple times",
+						Value: &command.flags.usernames,
 					},
 					cli.StringFlag{
 						Name:        "permission",
@@ -54,11 +53,12 @@ func (command *RepositoryUserCommand) GetCommand(fileCache *helper.FileCache) cl
 }
 
 func (command *RepositoryUserCommand) AddUserAction(context *cli.Context) error {
+
 	if len(command.flags.repository) == 0 {
 		return fmt.Errorf("flag --repository is required.")
 	}
 
-	if len(command.flags.username) == 0 {
+	if len(command.flags.usernames) == 0 {
 		return fmt.Errorf("flag --username is required.")
 	}
 
@@ -82,5 +82,25 @@ func (command *RepositoryUserCommand) AddUserAction(context *cli.Context) error 
 		return err
 	}
 
-	return client.SetRepositoryUserPermission(projectKey, command.flags.repository, command.flags.username, command.flags.permission)
+	fmt.Printf("\nGranting permission %s on repository %s (%s)\n\n", command.flags.permission, repo.Name, repo.Links["self"][0]["href"])
+
+	failedCount := 0
+	for _, username := range command.flags.usernames {
+		err := client.SetRepositoryUserPermission(projectKey, command.flags.repository, username, command.flags.permission)
+
+		if err != nil {
+			fmt.Printf("[KO] %s - %s\n", username, err)
+			failedCount += 1
+		} else {
+			fmt.Printf("[OK] %s\n", username)
+		}
+	}
+
+	if failedCount > 0 {
+		return fmt.Errorf("%d user(s) have not been added properly.\n", failedCount)
+	} else {
+		fmt.Println("\nSuccess: All users have been granted permissions.\n")
+	}
+
+	return nil
 }

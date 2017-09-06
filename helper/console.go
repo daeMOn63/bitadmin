@@ -67,7 +67,8 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 		flags := c.Command.Flags
 		for _, flag := range flags {
 			name := flag.GetName()
-			if !c.IsSet(name) {
+			_, isStringSliceFlag := flag.(cli.StringSliceFlag)
+			if !c.IsSet(name) || isStringSliceFlag {
 				s := "--"
 				if len(name) == 1 {
 					s = "-"
