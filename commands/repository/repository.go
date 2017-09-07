@@ -14,11 +14,6 @@ func (rc *RepositoryCommand) GetCommand() cli.Command {
 	fileCache := rc.Settings.GetFileCache()
 	fileCache.Load()
 
-	repositoryUserCommand := &RepositoryUserCommand{
-		Settings: rc.Settings,
-		flags:    &RepositoryUserCommandFlags{},
-	}
-
 	repositoryCreateCommand := &RepositoryCreateCommand{
 		Settings: rc.Settings,
 		flags:    &RepositoryCreateCommandFlags{},
@@ -29,7 +24,6 @@ func (rc *RepositoryCommand) GetCommand() cli.Command {
 		Usage: "Repository opertations",
 		Subcommands: []cli.Command{
 			repositoryCreateCommand.GetCommand(fileCache),
-			repositoryUserCommand.GetCommand(fileCache),
 		},
 	}
 }

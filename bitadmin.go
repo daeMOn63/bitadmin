@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/daeMOn63/bitadmin/commands/cache"
 	"github.com/daeMOn63/bitadmin/commands/repository"
+	"github.com/daeMOn63/bitadmin/commands/user"
 	"github.com/daeMOn63/bitadmin/helper"
 	"github.com/daeMOn63/bitadmin/settings"
 	"github.com/urfave/cli"
@@ -33,9 +34,14 @@ func main() {
 		Settings: globalSettings,
 	}
 
+	userCommand := &user.UserCommand{
+		Settings: globalSettings,
+	}
+
 	app.Commands = []cli.Command{
 		cacheCommand.GetCommand(),
 		repositoryCommand.GetCommand(),
+		userCommand.GetCommand(),
 	}
 
 	app.BashComplete = helper.AppAutoComplete
