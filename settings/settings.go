@@ -44,7 +44,9 @@ func (bs *BitAdminSettings) GetApiClient() (*bitclient.BitClient, error) {
 }
 
 func (bs *BitAdminSettings) GetFileCache() *helper.FileCache {
-	return helper.NewFileCache(bs.TempDir)
+	cache := helper.NewFileCache(bs.TempDir)
+	cache.Load()
+	return cache
 }
 
 func (bs *BitAdminSettings) Validate() error {

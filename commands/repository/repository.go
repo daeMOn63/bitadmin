@@ -12,11 +12,14 @@ type RepositoryCommand struct {
 func (rc *RepositoryCommand) GetCommand() cli.Command {
 
 	fileCache := rc.Settings.GetFileCache()
-	fileCache.Load()
 
 	repositoryCreateCommand := &RepositoryCreateCommand{
 		Settings: rc.Settings,
 		flags:    &RepositoryCreateCommandFlags{},
+	}
+
+	enableSonarCleanupCommand := &EnableSonarCleanupCommand{
+		Settings: rc.Settings,
 	}
 
 	return cli.Command{
@@ -24,6 +27,7 @@ func (rc *RepositoryCommand) GetCommand() cli.Command {
 		Usage: "Repository opertations",
 		Subcommands: []cli.Command{
 			repositoryCreateCommand.GetCommand(fileCache),
+			enableSonarCleanupCommand.GetCommand(),
 		},
 	}
 }

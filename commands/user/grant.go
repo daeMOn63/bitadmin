@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/daeMOn63/bitadmin/helper"
 	"github.com/daeMOn63/bitadmin/settings"
+	"github.com/daeMOn63/bitclient"
 	"github.com/urfave/cli"
 )
 
@@ -18,7 +19,7 @@ type UserGrantCommandFlags struct {
 	permission   string
 }
 
-func (command *UserGrantCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+func (command *UserGrantCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "grant",
 		Usage:  "Grant users permission on repositories",
@@ -41,7 +42,7 @@ func (command *UserGrantCommand) GetCommand(fileCache *helper.FileCache) cli.Com
 			},
 		},
 		BashComplete: func(c *cli.Context) {
-			helper.AutoComplete(c, fileCache)
+			helper.AutoComplete(c, command.Settings.GetFileCache())
 		},
 	}
 }
@@ -61,7 +62,6 @@ func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
 	}
 
 	fileCache := command.Settings.GetFileCache()
-	fileCache.Load()
 
 	client, err := command.Settings.GetApiClient()
 	if err != nil {
@@ -77,7 +77,12 @@ func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
 		}
 
 		for _, username := range command.flags.usernames {
-			err := client.SetRepositoryUserPermission(repo.Project.Key, repositorySlug, username, command.flags.permission)
+			params := bitclient.SetRepositoryUserPermissionRequest{
+				Username:   username,
+				Permission: command.flags.permission,
+			}
+
+			err := client.SetRepositoryUserPermission(repo.Project.Key, repositorySlug, params)
 
 			if err != nil {
 				fmt.Printf("[KO] rep%s - %s\n", username, err)

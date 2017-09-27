@@ -3,6 +3,7 @@ package cache
 import (
 	"fmt"
 	"github.com/daeMOn63/bitadmin/settings"
+	"github.com/daeMOn63/bitclient"
 	"github.com/urfave/cli"
 )
 
@@ -42,37 +43,47 @@ func (command *CacheCommand) ClearCacheAction(context *cli.Context) error {
 func (command *CacheCommand) WarmupCacheAction(context *cli.Context) error {
 	fmt.Println("warming up cache... ")
 	client, err := command.Settings.GetApiClient()
-
 	if err != nil {
 		return err
 	}
 
-	command.Settings.GetFileCache().Users, err = client.GetUsers()
+	cache := command.Settings.GetFileCache()
 	if err != nil {
 		return err
 	}
 
-	command.Settings.GetFileCache().Projects, err = client.GetProjects()
+	maxPagedRequest := bitclient.PagedRequest{
+		Limit: 10000,
+		Start: 0,
+	}
+
+	userResponse, err := client.GetUsers(maxPagedRequest)
 	if err != nil {
 		return err
 	}
+	cache.Users = userResponse.Values
 
-	for _, project := range command.Settings.GetFileCache().Projects {
+	projectResponse, err := client.GetProjects(maxPagedRequest)
+	if err != nil {
+		return err
+	}
+	cache.Projects = projectResponse.Values
 
-		repositories, err := client.GetRepositories(project.Key)
+	for _, project := range cache.Projects {
+
+		repositoryResponse, err := client.GetRepositories(project.Key, maxPagedRequest)
 
 		if err != nil {
 			return err
 		}
 
-		command.Settings.GetFileCache().Repositories = append(command.Settings.GetFileCache().Repositories, repositories...)
+		cache.Repositories = append(cache.Repositories, repositoryResponse.Values...)
 	}
 
-	return command.Settings.GetFileCache().Save()
+	return cache.Save()
 }
 
 func (command *CacheCommand) DumpCacheAction(context *cli.Context) error {
-	err := command.Settings.GetFileCache().Load()
 	fmt.Println(command.Settings.GetFileCache())
-	return err
+	return nil
 }

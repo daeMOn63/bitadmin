@@ -39,7 +39,8 @@ func (c *FileCache) Save() error {
 	data, _ := json.Marshal(c)
 	filename := c.getCacheFileName()
 
-	_ = os.Mkdir(filepath.Dir(filename), 0775)
+	os.Mkdir(filepath.Dir(filename), 0775)
+
 	err := ioutil.WriteFile(filename, data, 0644)
 
 	return err

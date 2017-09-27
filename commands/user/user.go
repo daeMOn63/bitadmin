@@ -11,9 +11,6 @@ type UserCommand struct {
 
 func (rc *UserCommand) GetCommand() cli.Command {
 
-	fileCache := rc.Settings.GetFileCache()
-	fileCache.Load()
-
 	userGrantCommand := &UserGrantCommand{
 		Settings: rc.Settings,
 		flags:    &UserGrantCommandFlags{},
@@ -23,7 +20,7 @@ func (rc *UserCommand) GetCommand() cli.Command {
 		Name:  "user",
 		Usage: "User opertations",
 		Subcommands: []cli.Command{
-			userGrantCommand.GetCommand(fileCache),
+			userGrantCommand.GetCommand(),
 		},
 	}
 }
