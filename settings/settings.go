@@ -5,14 +5,16 @@ import (
 	"github.com/daeMOn63/bitadmin/helper"
 	"github.com/daeMOn63/bitclient"
 	"github.com/urfave/cli"
+	"io/ioutil"
 	"os"
 )
 
 type BitAdminSettings struct {
-	Username string
-	Password string
-	Url      string
-	TempDir  string
+	Username     string
+	Password     string
+	PasswordFile string
+	Url          string
+	TempDir      string
 }
 
 func (bs *BitAdminSettings) GetFlags() []cli.Flag {
@@ -23,19 +25,40 @@ func (bs *BitAdminSettings) GetFlags() []cli.Flag {
 			Destination: &bs.Username,
 		},
 		cli.StringFlag{
-			Name:        "password",
-			Usage:       "Authenticate on bitbucket with `<password>`",
-			Destination: &bs.Password,
-		},
-		cli.StringFlag{
 			Name:        "url",
 			Usage:       "`<url>` of the bitbucket server",
 			Destination: &bs.Url,
+		},
+		cli.StringFlag{
+			Name:        "password",
+			Usage:       "Read password from `<file>`",
+			Destination: &bs.PasswordFile,
 		},
 	}
 }
 
 func (bs *BitAdminSettings) GetApiClient() (*bitclient.BitClient, error) {
+
+	// Load password from password file, checking for proper file permissions
+	if bs.PasswordFile != "" {
+		fileInfo, err := os.Stat(bs.PasswordFile)
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("Cannot read password file %s", bs.PasswordFile)
+		}
+
+		// Ensure proper permission on password file - ignoring named pipes
+		if (fileInfo.Mode()&os.ModeNamedPipe) == 0 && fileInfo.Mode() != 0600 {
+			return nil, fmt.Errorf("Wrong permission on password file, please run \"chmod 600 %s\".", bs.PasswordFile)
+		}
+
+		passFromFile, err := ioutil.ReadFile(bs.PasswordFile)
+		if err != nil {
+			return nil, err
+		}
+
+		bs.Password = string(passFromFile)
+	}
+
 	if err := bs.Validate(); err != nil {
 		return nil, err
 	}
@@ -50,6 +73,7 @@ func (bs *BitAdminSettings) GetFileCache() *helper.FileCache {
 }
 
 func (bs *BitAdminSettings) Validate() error {
+
 	if bs.Username == "" {
 		return fmt.Errorf("global flag --user is required")
 	}

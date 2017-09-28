@@ -36,12 +36,12 @@ func (cc *CacheCommand) GetCommand() cli.Command {
 }
 
 func (command *CacheCommand) ClearCacheAction(context *cli.Context) error {
-	fmt.Println("clearing cache... ")
+	fmt.Println("Clearing cache... ")
 	return command.Settings.GetFileCache().Clear()
 }
 
 func (command *CacheCommand) WarmupCacheAction(context *cli.Context) error {
-	fmt.Println("warming up cache... ")
+	fmt.Println("Warming up cache...\n")
 	client, err := command.Settings.GetApiClient()
 	if err != nil {
 		return err
@@ -57,18 +57,25 @@ func (command *CacheCommand) WarmupCacheAction(context *cli.Context) error {
 		Start: 0,
 	}
 
+	fmt.Printf("Loading users...")
 	userResponse, err := client.GetUsers(maxPagedRequest)
 	if err != nil {
 		return err
 	}
 	cache.Users = userResponse.Values
+	fmt.Println("done")
+	fmt.Printf("Cached %d users\n", len(cache.Users))
 
+	fmt.Printf("Loading projects...")
 	projectResponse, err := client.GetProjects(maxPagedRequest)
 	if err != nil {
 		return err
 	}
 	cache.Projects = projectResponse.Values
+	fmt.Println("done")
+	fmt.Printf("Cached %d projects\n", len(cache.Projects))
 
+	fmt.Printf("Loading repositories...")
 	for _, project := range cache.Projects {
 
 		repositoryResponse, err := client.GetRepositories(project.Key, maxPagedRequest)
@@ -79,7 +86,10 @@ func (command *CacheCommand) WarmupCacheAction(context *cli.Context) error {
 
 		cache.Repositories = append(cache.Repositories, repositoryResponse.Values...)
 	}
+	fmt.Println("done")
+	fmt.Printf("Cached %d repositories\n", len(cache.Repositories))
 
+	fmt.Println("\nCache warmup completed")
 	return cache.Save()
 }
 
