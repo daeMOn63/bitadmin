@@ -13,7 +13,7 @@ BitAdmin is a command line tool aimed to help and speed up Atlassian Bitbucket a
 ## Overview
 
 BitAdmin goal is to ease and speedup the administration of Atlassion BitBucket, when the users / projects / repositories database is getting big.
-It aims to offer handy commands for common administration tasks (creating repository with predefined settings, settings user permissions...) by calling the BitBucket api (exposed from the [BitClient](https://github.com/daeMOn63/bitclient)
+It aims to offer handy commands for common administration tasks (creating repository with predefined settings, settings user permissions...) by calling the BitBucket api (exposed from the [BitClient](https://github.com/daeMOn63/bitclient))
 
 ## Installation
 Make sure you have a working Go environment.  Go version 1.2+ is supported.  [See
@@ -36,11 +36,11 @@ Then install the tool
 $ go install
 ```
 
-Make sure your `$GOPATH/bin` folder is in your path.
+Make sure your `$GOPATH/bin` folder is in your path and the ```bitadmin``` command should be available from everywhere
 
 ### Autocompletion
 
-Command line auto completion save even more time while typing command, as the tool support autocomplete for :
+Command line auto completion can save even more time while typing commands, as the tool provide autocomplete for :
 - buildin commands
 - commands arguments
 - stash usernames
