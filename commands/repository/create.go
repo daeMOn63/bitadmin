@@ -99,5 +99,8 @@ func (command *RepositoryCreateCommand) CreateRepositoryAction(context *cli.Cont
 	helper.PrintLinks(resp.Links)
 	fmt.Println()
 
+	fileCache := command.Settings.GetFileCache()
+	fileCache.Repositories = append(fileCache.Repositories, resp)
+	fileCache.Save()
 	return nil
 }
