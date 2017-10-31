@@ -54,6 +54,8 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 			fmt.Fprintln(c.App.Writer, user.Slug)
 		}
 	case "--repository":
+	case "--sourceRepository":
+	case "--targetRepository":
 		for _, repo := range cache.Repositories {
 			fmt.Fprintln(c.App.Writer, repo.Slug)
 		}
