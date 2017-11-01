@@ -24,7 +24,7 @@ func (command *EnableSonarCleanupCommand) GetCommand() cli.Command {
 // EnableSonarCleanupAction allow to turn on the sonar cleanup setting on all available repositories
 func (command *EnableSonarCleanupCommand) EnableSonarCleanupAction(context *cli.Context) error {
 	cache := command.Settings.GetFileCache()
-	client, _ := command.Settings.GetApiClient()
+	client, _ := command.Settings.GetAPIClient()
 
 	for _, repository := range cache.Repositories {
 		sonarSettings, _ := client.GetSonarSettings(repository.Project.Key, repository.Slug)

@@ -66,7 +66,7 @@ func (command *CloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli
 // CloneSettingsAction provide logic allowing to copy repository settings from one to another.
 // Thoses settings include user / group permissions, and branch restrictions.
 func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) error {
-	client, err := command.Settings.GetApiClient()
+	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
 	}

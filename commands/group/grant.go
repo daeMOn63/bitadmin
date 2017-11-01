@@ -68,7 +68,7 @@ func (command *GrantCommand) GrantAction(context *cli.Context) error {
 
 	fileCache := command.Settings.GetFileCache()
 
-	client, err := command.Settings.GetApiClient()
+	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
 	}

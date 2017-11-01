@@ -44,7 +44,7 @@ func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Contex
 
 	fileCache := command.Settings.GetFileCache()
 
-	client, err := command.Settings.GetApiClient()
+	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
 	}

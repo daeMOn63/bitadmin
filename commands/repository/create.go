@@ -78,7 +78,7 @@ func (command *CreateCommand) CreateRepositoryAction(context *cli.Context) error
 		Forkable: command.flags.forkable,
 	}
 
-	client, err := command.Settings.GetApiClient()
+	client, err := command.Settings.GetAPIClient()
 
 	if err != nil {
 		return err
