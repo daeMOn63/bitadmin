@@ -1,3 +1,5 @@
+// Package cache provide actions for loading / clearing / dumping the users, repositories, groups, projects from Bitbucket
+// It aims to provide fluid autocompletion and avoid hitting the API while searching for specific entities.
 package cache
 
 import (
@@ -7,11 +9,13 @@ import (
 	"github.com/urfave/cli"
 )
 
-type CacheCommand struct {
+// Command define the root command holding cache actions
+type Command struct {
 	Settings *settings.BitAdminSettings
 }
 
-func (cc *CacheCommand) GetCommand() cli.Command {
+// GetCommand provide the cli.Command needed by urfave/cli
+func (command *Command) GetCommand() cli.Command {
 	return cli.Command{
 		Name:  "cache",
 		Usage: "Caching data for faster operation",
@@ -19,28 +23,30 @@ func (cc *CacheCommand) GetCommand() cli.Command {
 			{
 				Name:   "clear",
 				Usage:  "Clear all cached data",
-				Action: cc.ClearCacheAction,
+				Action: command.ClearCacheAction,
 			},
 			{
 				Name:   "warmup",
 				Usage:  "Fetch data and cache them",
-				Action: cc.WarmupCacheAction,
+				Action: command.WarmupCacheAction,
 			},
 			{
 				Name:   "dump",
 				Usage:  "Print current cache content",
-				Action: cc.DumpCacheAction,
+				Action: command.DumpCacheAction,
 			},
 		},
 	}
 }
 
-func (command *CacheCommand) ClearCacheAction(context *cli.Context) error {
+// ClearCacheAction wipe out the cache
+func (command *Command) ClearCacheAction(context *cli.Context) error {
 	fmt.Println("Clearing cache... ")
 	return command.Settings.GetFileCache().Clear()
 }
 
-func (command *CacheCommand) WarmupCacheAction(context *cli.Context) error {
+// WarmupCacheAction load all entities and save them into a file
+func (command *Command) WarmupCacheAction(context *cli.Context) error {
 	fmt.Println("Warming up cache...\n")
 	client, err := command.Settings.GetApiClient()
 	if err != nil {
@@ -93,7 +99,8 @@ func (command *CacheCommand) WarmupCacheAction(context *cli.Context) error {
 	return cache.Save()
 }
 
-func (command *CacheCommand) DumpCacheAction(context *cli.Context) error {
+// DumpCacheAction print on stdout the content of the cache
+func (command *Command) DumpCacheAction(context *cli.Context) error {
 	fmt.Println(command.Settings.GetFileCache())
 	return nil
 }

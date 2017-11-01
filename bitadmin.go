@@ -27,7 +27,7 @@ func main() {
 	app.Email = "https://github.com/daeMOn63/bitadmin"
 	app.Flags = globalSettings.GetFlags()
 
-	cacheCommand := &cache.CacheCommand{
+	cacheCommand := &cache.Command{
 		Settings: globalSettings,
 	}
 
