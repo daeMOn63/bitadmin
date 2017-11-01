@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/daeMOn63/bitadmin/helper"
 	"github.com/daeMOn63/bitadmin/settings"
-	"github.com/daeMOn63/bitclient"
 	"github.com/urfave/cli"
 )
 
@@ -17,11 +16,12 @@ type CloneSettingsCommand struct {
 
 // CloneSettingsCommandFlags hold flag values for the CloneSettingsCommand
 type CloneSettingsCommandFlags struct {
-	sourceRepository   string
-	targetRepository   string
-	userPermissions    bool
-	groupPermissions   bool
-	branchRestrictions bool
+	sourceRepository    string
+	targetRepository    string
+	userPermissions     bool
+	groupPermissions    bool
+	branchRestrictions  bool
+	pullRequestSettings bool
 }
 
 // GetCommand provide a ready to use cli.Command
@@ -56,6 +56,11 @@ func (command *CloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli
 				Usage:       "Copy branch restrictions",
 				Destination: &command.flags.branchRestrictions,
 			},
+			cli.BoolFlag{
+				Name:        "pullRequestSettings",
+				Usage:       "Copy pull-request settings",
+				Destination: &command.flags.pullRequestSettings,
+			},
 		},
 		BashComplete: func(c *cli.Context) {
 			helper.AutoComplete(c, fileCache)
@@ -73,28 +78,14 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 
 	fileCache := command.Settings.GetFileCache()
 
-	var sourceRepo, targetRepo bitclient.Repository
-	var sourceFound, targetFound bool
-
-	for _, repo := range fileCache.Repositories {
-		switch repo.Slug {
-		case command.flags.sourceRepository:
-			sourceFound = true
-			sourceRepo = repo
-		case command.flags.targetRepository:
-			targetFound = true
-			targetRepo = repo
-		}
+	sourceRepo, err := fileCache.SearchRepositorySlug(command.flags.sourceRepository)
+	if err != nil {
+		return err
 	}
 
-	fmt.Println(sourceRepo.Name)
-	fmt.Println(targetRepo.Name)
-
-	if sourceFound == false {
-		return fmt.Errorf("Cannot find repository %s from cache", command.flags.sourceRepository)
-	}
-	if targetFound == false {
-		return fmt.Errorf("Cannot find repository %s from cache", command.flags.targetRepository)
+	targetRepo, err := fileCache.SearchRepositorySlug(command.flags.targetRepository)
+	if err != nil {
+		return err
 	}
 
 	if command.flags.userPermissions == true {
@@ -102,6 +93,13 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 		if err != nil {
 			return err
 		}
+		fmt.Printf(
+			"User permissions successfully copied from %s/%s to %s/%s\n",
+			sourceRepo.Project.Key,
+			sourceRepo.Slug,
+			targetRepo.Project.Key,
+			targetRepo.Slug,
+		)
 	}
 
 	if command.flags.groupPermissions == true {
@@ -109,6 +107,13 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 		if err != nil {
 			return err
 		}
+		fmt.Printf(
+			"Group permissions successfully copied from %s/%s to %s/%s\n",
+			sourceRepo.Project.Key,
+			sourceRepo.Slug,
+			targetRepo.Project.Key,
+			targetRepo.Slug,
+		)
 	}
 
 	if command.flags.branchRestrictions == true {
@@ -116,6 +121,32 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 		if err != nil {
 			return err
 		}
+		fmt.Printf(
+			"Branch restrictions successfully copied from %s/%s to %s/%s\n",
+			sourceRepo.Project.Key,
+			sourceRepo.Slug,
+			targetRepo.Project.Key,
+			targetRepo.Slug,
+		)
+	}
+
+	if command.flags.pullRequestSettings == true {
+		settings, err := client.GetPullRequestSettings(sourceRepo.Project.Key, sourceRepo.Slug)
+		if err != nil {
+			return err
+		}
+
+		err = client.SetPullRequestSettings(targetRepo.Project.Key, targetRepo.Slug, settings)
+		if err != nil {
+			return err
+		}
+		fmt.Printf(
+			"Pull request settings successfully copied from %s/%s to %s/%s\n",
+			sourceRepo.Project.Key,
+			sourceRepo.Slug,
+			targetRepo.Project.Key,
+			targetRepo.Slug,
+		)
 	}
 
 	return nil

@@ -68,7 +68,12 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 		fmt.Println("REPO_READ REPO_WRITE REPO_ADMIN")
 	default:
 		if lastArg[:2] == "--" {
-			return
+			flag, err := getFlag(c, lastArg[2:])
+			if err == nil {
+				if _, ok := flag.(cli.BoolFlag); ok == false {
+					return
+				}
+			}
 		}
 
 		flags := c.Command.Flags
@@ -85,4 +90,14 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 		}
 	}
 
+}
+
+func getFlag(c *cli.Context, name string) (cli.Flag, error) {
+	for _, flag := range c.Command.Flags {
+		if flag.GetName() == name {
+			return flag, nil
+		}
+	}
+
+	return nil, fmt.Errorf("cannot find flag %s", name)
 }

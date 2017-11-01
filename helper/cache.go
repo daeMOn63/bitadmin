@@ -33,7 +33,7 @@ func (c *FileCache) SearchRepositorySlug(slug string) (*bitclient.Repository, er
 		}
 	}
 
-	return nil, fmt.Errorf("Cannot find repositry with slug {%s}, maybe refresh local cache ?", slug)
+	return nil, fmt.Errorf("cannot find repositry with slug {%s}, maybe refresh local cache ?", slug)
 }
 
 func (c *FileCache) getCacheFileName() string {
