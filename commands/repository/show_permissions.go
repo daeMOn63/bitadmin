@@ -58,7 +58,7 @@ func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Contex
 	}
 
 	if repository == nil {
-		return fmt.Errorf("Cannot retreive repository %s", command.flags.repositorySlug)
+		return fmt.Errorf("Cannot retrieve repository %s", command.flags.repositorySlug)
 	}
 
 	userResponse, err := client.GetRepositoryUserPermission(repository.Project.Key, repository.Slug, bitclient.GetRepositoryUserPermissionRequest{})

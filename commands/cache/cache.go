@@ -47,7 +47,7 @@ func (command *Command) ClearCacheAction(context *cli.Context) error {
 
 // WarmupCacheAction load all entities and save them into a file
 func (command *Command) WarmupCacheAction(context *cli.Context) error {
-	fmt.Println("Warming up cache...\n")
+	fmt.Println("Warming up cache...")
 	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
