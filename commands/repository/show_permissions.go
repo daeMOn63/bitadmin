@@ -1,3 +1,4 @@
+// Package repository hold actions on the Bitbucket repositories
 package repository
 
 import (
@@ -8,20 +9,23 @@ import (
 	"github.com/urfave/cli"
 )
 
-type RepositoryShowPermissionsCommand struct {
+// ShowPermissionsCommand define base struct for ShowPermissions actions
+type ShowPermissionsCommand struct {
 	Settings *settings.BitAdminSettings
-	flags    *RepositoryShowPermissionsFlags
+	flags    *ShowPermissionsFlags
 }
 
-type RepositoryShowPermissionsFlags struct {
+// ShowPermissionsFlags define flags required by the ShowPermissionsAction
+type ShowPermissionsFlags struct {
 	repositorySlug string
 }
 
-func (command *RepositoryShowPermissionsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+// GetCommand provide a ready to use cli.Command
+func (command *ShowPermissionsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
 	return cli.Command{
 		Name:   "show-permission",
 		Usage:  "Show permissions on given repository",
-		Action: command.ShowRepositoryPermissionsAction,
+		Action: command.ShowPermissionsAction,
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name:        "repository",
@@ -35,7 +39,8 @@ func (command *RepositoryShowPermissionsCommand) GetCommand(fileCache *helper.Fi
 	}
 }
 
-func (command *RepositoryShowPermissionsCommand) ShowRepositoryPermissionsAction(context *cli.Context) error {
+// ShowPermissionsAction display the current user / group permissions on given repository
+func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Context) error {
 
 	fileCache := command.Settings.GetFileCache()
 

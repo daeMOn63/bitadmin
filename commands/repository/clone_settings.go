@@ -1,3 +1,4 @@
+// Package repository hold actions on the Bitbucket repositories
 package repository
 
 import (
@@ -8,12 +9,14 @@ import (
 	"github.com/urfave/cli"
 )
 
-type RepositoryCloneSettingsCommand struct {
+// CloneSettingsCommand define base struct for the clone settings actions
+type CloneSettingsCommand struct {
 	Settings *settings.BitAdminSettings
-	flags    *RepositoryCloneSettingsCommandFlags
+	flags    *CloneSettingsCommandFlags
 }
 
-type RepositoryCloneSettingsCommandFlags struct {
+// CloneSettingsCommandFlags hold flag values for the CloneSettingsCommand
+type CloneSettingsCommandFlags struct {
 	sourceRepository   string
 	targetRepository   string
 	userPermissions    bool
@@ -21,11 +24,12 @@ type RepositoryCloneSettingsCommandFlags struct {
 	branchRestrictions bool
 }
 
-func (command *RepositoryCloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+// GetCommand provide a ready to use cli.Command
+func (command *CloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
 	return cli.Command{
 		Name:   "clone-settings",
 		Usage:  "Clone various settings from a repository to another",
-		Action: command.RepositoryCloneSettingsAction,
+		Action: command.CloneSettingsAction,
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name:        "sourceRepository",
@@ -59,7 +63,9 @@ func (command *RepositoryCloneSettingsCommand) GetCommand(fileCache *helper.File
 	}
 }
 
-func (command *RepositoryCloneSettingsCommand) RepositoryCloneSettingsAction(context *cli.Context) error {
+// CloneSettingsAction provide logic allowing to copy repository settings from one to another.
+// Thoses settings include user / group permissions, and branch restrictions.
+func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) error {
 	client, err := command.Settings.GetApiClient()
 	if err != nil {
 		return err

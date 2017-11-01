@@ -1,3 +1,4 @@
+// Package repository hold actions on the Bitbucket repositories
 package repository
 
 import (
@@ -6,10 +7,12 @@ import (
 	"github.com/urfave/cli"
 )
 
+// EnableSonarCleanupCommand define base struct for EnableSonarCleanup actions
 type EnableSonarCleanupCommand struct {
 	Settings *settings.BitAdminSettings
 }
 
+// GetCommand provide a ready to use cli.Command
 func (command *EnableSonarCleanupCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "enable-sonar-cleanup",
@@ -18,6 +21,7 @@ func (command *EnableSonarCleanupCommand) GetCommand() cli.Command {
 	}
 }
 
+// EnableSonarCleanupAction allow to turn on the sonar cleanup setting on all available repositories
 func (command *EnableSonarCleanupCommand) EnableSonarCleanupAction(context *cli.Context) error {
 	cache := command.Settings.GetFileCache()
 	client, _ := command.Settings.GetApiClient()

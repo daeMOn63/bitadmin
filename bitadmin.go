@@ -31,7 +31,7 @@ func main() {
 		Settings: globalSettings,
 	}
 
-	repositoryCommand := &repository.RepositoryCommand{
+	repositoryCommand := &repository.Command{
 		Settings: globalSettings,
 	}
 

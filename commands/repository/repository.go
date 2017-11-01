@@ -1,3 +1,4 @@
+// Package repository hold actions on the Bitbucket repositories
 package repository
 
 import (
@@ -5,31 +6,33 @@ import (
 	"github.com/urfave/cli"
 )
 
-type RepositoryCommand struct {
+// Command define base struct for repository subcommands and actions
+type Command struct {
 	Settings *settings.BitAdminSettings
 }
 
-func (rc *RepositoryCommand) GetCommand() cli.Command {
+// GetCommand provide a ready to use cli.Command
+func (rc *Command) GetCommand() cli.Command {
 
 	fileCache := rc.Settings.GetFileCache()
 
-	repositoryCreateCommand := &RepositoryCreateCommand{
+	repositoryCreateCommand := &CreateCommand{
 		Settings: rc.Settings,
-		flags:    &RepositoryCreateCommandFlags{},
+		flags:    &CreateCommandFlags{},
 	}
 
 	enableSonarCleanupCommand := &EnableSonarCleanupCommand{
 		Settings: rc.Settings,
 	}
 
-	showPermissionsCommand := &RepositoryShowPermissionsCommand{
+	showPermissionsCommand := &ShowPermissionsCommand{
 		Settings: rc.Settings,
-		flags:    &RepositoryShowPermissionsFlags{},
+		flags:    &ShowPermissionsFlags{},
 	}
 
-	cloneSettingsCommand := &RepositoryCloneSettingsCommand{
+	cloneSettingsCommand := &CloneSettingsCommand{
 		Settings: rc.Settings,
-		flags:    &RepositoryCloneSettingsCommandFlags{},
+		flags:    &CloneSettingsCommandFlags{},
 	}
 
 	return cli.Command{

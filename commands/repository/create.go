@@ -1,3 +1,4 @@
+// Package repository hold actions on the Bitbucket repositories
 package repository
 
 import (
@@ -8,19 +9,22 @@ import (
 	"github.com/urfave/cli"
 )
 
-type RepositoryCreateCommand struct {
+// CreateCommand define base struct for Create actions
+type CreateCommand struct {
 	Settings *settings.BitAdminSettings
-	flags    *RepositoryCreateCommandFlags
+	flags    *CreateCommandFlags
 }
 
-type RepositoryCreateCommandFlags struct {
+// CreateCommandFlags hold flag values for the CreateCommand
+type CreateCommandFlags struct {
 	project  string
 	name     string
 	scm      string
 	forkable bool
 }
 
-func (command *RepositoryCreateCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+// GetCommand provide a ready to use cli.Command
+func (command *CreateCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
 	return cli.Command{
 		Name:   "create",
 		Usage:  "Create a new repository",
@@ -54,17 +58,18 @@ func (command *RepositoryCreateCommand) GetCommand(fileCache *helper.FileCache) 
 	}
 }
 
-func (command *RepositoryCreateCommand) CreateRepositoryAction(context *cli.Context) error {
+// CreateRepositoryAction use flag values to create a new repository
+func (command *CreateCommand) CreateRepositoryAction(context *cli.Context) error {
 	if len(command.flags.project) == 0 {
-		return fmt.Errorf("flag --project is required.")
+		return fmt.Errorf("flag --project is required")
 	}
 
 	if len(command.flags.name) == 0 {
-		return fmt.Errorf("flag --name is required.")
+		return fmt.Errorf("flag --name is required")
 	}
 
 	if len(command.flags.scm) == 0 {
-		return fmt.Errorf("flag --scm is required.")
+		return fmt.Errorf("flag --scm is required")
 	}
 
 	requestData := bitclient.CreateRepositoryRequest{
@@ -86,9 +91,9 @@ func (command *RepositoryCreateCommand) CreateRepositoryAction(context *cli.Cont
 		case bitclient.RequestError:
 			switch terr.Code {
 			case 404:
-				return fmt.Errorf("project {%s} does not exists\n", command.flags.project)
+				return fmt.Errorf("project {%s} does not exists", command.flags.project)
 			case 409:
-				return fmt.Errorf("repository {%s} already exists\n", command.flags.name)
+				return fmt.Errorf("repository {%s} already exists", command.flags.name)
 			}
 		}
 		return err
