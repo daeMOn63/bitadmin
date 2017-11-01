@@ -1,3 +1,4 @@
+// Package group provides actions for interacting with Bitbucket groups.
 package group
 
 import (
@@ -5,22 +6,24 @@ import (
 	"github.com/urfave/cli"
 )
 
-type GroupCommand struct {
+// Command define the base struct for providing group actions
+type Command struct {
 	Settings *settings.BitAdminSettings
 }
 
-func (rc *GroupCommand) GetCommand() cli.Command {
+// GetCommand provide a ready to use cli.Command
+func (rc *Command) GetCommand() cli.Command {
 
-	groupGrantCommand := &GroupGrantCommand{
+	grantCommand := &GrantCommand{
 		Settings: rc.Settings,
-		flags:    &GroupGrantCommandFlags{},
+		flags:    &GrantCommandFlags{},
 	}
 
 	return cli.Command{
 		Name:  "group",
 		Usage: "Group opertations",
 		Subcommands: []cli.Command{
-			groupGrantCommand.GetCommand(),
+			grantCommand.GetCommand(),
 		},
 	}
 }

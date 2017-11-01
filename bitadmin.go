@@ -39,7 +39,7 @@ func main() {
 		Settings: globalSettings,
 	}
 
-	groupCommand := &group.GroupCommand{
+	groupCommand := &group.Command{
 		Settings: globalSettings,
 	}
 

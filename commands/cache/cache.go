@@ -14,7 +14,7 @@ type Command struct {
 	Settings *settings.BitAdminSettings
 }
 
-// GetCommand provide the cli.Command needed by urfave/cli
+// GetCommand provide a ready to use cli.Command
 func (command *Command) GetCommand() cli.Command {
 	return cli.Command{
 		Name:  "cache",
