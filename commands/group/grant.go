@@ -1,4 +1,4 @@
-package user
+package group
 
 import (
 	"fmt"
@@ -8,21 +8,21 @@ import (
 	"github.com/urfave/cli"
 )
 
-type UserGrantCommand struct {
+type GroupGrantCommand struct {
 	Settings *settings.BitAdminSettings
-	flags    *UserGrantCommandFlags
+	flags    *GroupGrantCommandFlags
 }
 
-type UserGrantCommandFlags struct {
+type GroupGrantCommandFlags struct {
 	repositories cli.StringSlice
-	usernames    cli.StringSlice
+	names        cli.StringSlice
 	permission   string
 }
 
-func (command *UserGrantCommand) GetCommand() cli.Command {
+func (command *GroupGrantCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "grant",
-		Usage:  "Grant users permission on repositories",
+		Usage:  "Grant groups permission on repositories",
 		Action: command.GrantAction,
 		Flags: []cli.Flag{
 			cli.StringSliceFlag{
@@ -31,9 +31,9 @@ func (command *UserGrantCommand) GetCommand() cli.Command {
 				Value: &command.flags.repositories,
 			},
 			cli.StringSliceFlag{
-				Name:  "username",
-				Usage: "The `<username>` to be added on the repository. Can be repeated multiple times",
-				Value: &command.flags.usernames,
+				Name:  "name",
+				Usage: "The `<name>` of the group to be added on the repository. Can be repeated multiple times",
+				Value: &command.flags.names,
 			},
 			cli.StringFlag{
 				Name:        "permission",
@@ -47,14 +47,14 @@ func (command *UserGrantCommand) GetCommand() cli.Command {
 	}
 }
 
-func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
+func (command *GroupGrantCommand) GrantAction(context *cli.Context) error {
 
 	if len(command.flags.repositories) == 0 {
 		return fmt.Errorf("flag --repository is required.")
 	}
 
-	if len(command.flags.usernames) == 0 {
-		return fmt.Errorf("At least one --username is required.")
+	if len(command.flags.names) == 0 {
+		return fmt.Errorf("At least one --name is required.")
 	}
 
 	if len(command.flags.permission) == 0 {
@@ -76,24 +76,24 @@ func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
 			return err
 		}
 
-		for _, username := range command.flags.usernames {
-			params := bitclient.SetRepositoryUserPermissionRequest{
-				Username:   username,
+		for _, name := range command.flags.names {
+			params := bitclient.SetRepositoryGroupPermissionRequest{
+				Name:       name,
 				Permission: command.flags.permission,
 			}
 
-			err := client.SetRepositoryUserPermission(repo.Project.Key, repositorySlug, params)
+			err := client.SetRepositoryGroupPermission(repo.Project.Key, repositorySlug, params)
 
 			if err != nil {
-				fmt.Printf("[KO] rep%s - %s\n", username, err)
-				return fmt.Errorf("repo %s, user %s, permission %s - reason: %s\n", repositorySlug, username, command.flags.permission, err)
+				fmt.Printf("[KO] rep%s - %s\n", name, err)
+				return fmt.Errorf("repo %s, group %s, permission %s - reason: %s\n", repositorySlug, name, command.flags.permission, err)
 			} else {
-				fmt.Printf("[OK] repo %s, user %s, permission %s\n", repositorySlug, username, command.flags.permission)
+				fmt.Printf("[OK] repo %s, group %s, permission %s\n", repositorySlug, name, command.flags.permission)
 			}
 		}
 	}
 
-	fmt.Printf("Done granting user permissions\n")
+	fmt.Printf("Done granting group permissions\n")
 
 	return nil
 }

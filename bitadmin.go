@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/daeMOn63/bitadmin/commands/cache"
+	"github.com/daeMOn63/bitadmin/commands/group"
 	"github.com/daeMOn63/bitadmin/commands/repository"
 	"github.com/daeMOn63/bitadmin/commands/user"
 	"github.com/daeMOn63/bitadmin/helper"
@@ -38,10 +39,15 @@ func main() {
 		Settings: globalSettings,
 	}
 
+	groupCommand := &group.GroupCommand{
+		Settings: globalSettings,
+	}
+
 	app.Commands = []cli.Command{
 		cacheCommand.GetCommand(),
 		repositoryCommand.GetCommand(),
 		userCommand.GetCommand(),
+		groupCommand.GetCommand(),
 	}
 
 	app.BashComplete = helper.AppAutoComplete

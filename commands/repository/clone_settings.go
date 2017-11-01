@@ -23,7 +23,7 @@ type RepositoryCloneSettingsCommandFlags struct {
 
 func (command *RepositoryCloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
 	return cli.Command{
-		Name:   "clone",
+		Name:   "clone-settings",
 		Usage:  "Clone various settings from a repository to another",
 		Action: command.RepositoryCloneSettingsAction,
 		Flags: []cli.Flag{
