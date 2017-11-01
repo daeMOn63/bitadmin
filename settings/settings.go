@@ -46,8 +46,9 @@ func (bs *BitAdminSettings) GetApiClient() (*bitclient.BitClient, error) {
 			return nil, fmt.Errorf("Cannot read password file %s", bs.PasswordFile)
 		}
 
-		// Ensure proper permission on password file - ignoring named pipes
-		if (fileInfo.Mode()&os.ModeNamedPipe) == 0 && fileInfo.Mode() != 0600 {
+		// Ensure proper permission on password file or named pipe if used
+		mode = fileInfo.Mode() - (fileInfo.Mode() & os.ModeNamedPipe)
+		if mode != 0600 {
 			return nil, fmt.Errorf("Wrong permission on password file, please run \"chmod 600 %s\".", bs.PasswordFile)
 		}
 

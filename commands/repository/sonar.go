@@ -13,7 +13,7 @@ type EnableSonarCleanupCommand struct {
 func (command *EnableSonarCleanupCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "enable-sonar-cleanup",
-		Usage:  "Enable sonar cleanup feature if sonar is enabled on repository",
+		Usage:  "Check all repositories and enable sonar cleanup feature if sonar is enabled on repository",
 		Action: command.EnableSonarCleanupAction,
 	}
 }
