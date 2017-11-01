@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Cache interface {
@@ -62,6 +63,38 @@ func (c *FileCache) Load() error {
 	}
 
 	return err
+}
+
+func (c *FileCache) String() string {
+	output := ""
+	for _, user := range c.Users {
+		output += fmt.Sprintf("user %d - %s - %s - %s - %s\n", user.Id, user.EmailAddress, user.Name, user.DisplayName, user.Slug)
+	}
+
+	for _, project := range c.Projects {
+
+		var projectLinks []string
+		for _, sublinks := range project.Links {
+			for _, link := range sublinks {
+				projectLinks = append(projectLinks, link["href"])
+			}
+		}
+
+		output += fmt.Sprintf("project %s - %s - %s\n", project.Key, project.Name, strings.Join(projectLinks, " - "))
+	}
+
+	for _, repo := range c.Repositories {
+		var repoLinks []string
+		for _, sublinks := range repo.Links {
+			for _, link := range sublinks {
+				repoLinks = append(repoLinks, link["href"])
+			}
+		}
+
+		output += fmt.Sprintf("repository %s/%s - %s - %s\n", repo.Project.Key, repo.Slug, repo.Name, strings.Join(repoLinks, " - "))
+	}
+
+	return output
 }
 
 func NewFileCache(cacheDir string) *FileCache {

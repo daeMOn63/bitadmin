@@ -21,7 +21,7 @@ Also, it try to stay easily extensible, meaning adding a new custom command for 
 Make sure you have a working Go environment.  Go version 1.2+ is supported.  [See
 the install instructions for Go](http://golang.org/doc/install.html).
 
-To install bitadmin, simply run:
+To download bitadmin, simply run:
 ```
 $ go get github.com/daeMOn63/bitadmin
 ```
@@ -38,12 +38,12 @@ Then install the tool
 $ go install
 ```
 
-Make sure your `$GOPATH/bin` folder is in your path and the ```bitadmin``` command should be available from everywhere
+Make sure your `$GOPATH/bin` folder is in your path and the ```bitadmin``` command will be available from everywhere
 
 ### Autocompletion
 
 Command line auto completion can save even more time while typing commands, as the tool provide autocomplete for :
-- buildin commands
+- builtin commands
 - commands arguments
 - stash usernames
 - stash project keys
@@ -73,7 +73,7 @@ But note that it's not needed by anything else than autocomplete.
 
 ## Getting started
 
-The bitadmin binary provide built it documentation:
+The bitadmin binary provide built in documentation:
 ```
 $ bitadmin
 NAME:

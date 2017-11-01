@@ -17,6 +17,7 @@ type UserGrantCommandFlags struct {
 	repositories cli.StringSlice
 	usernames    cli.StringSlice
 	permission   string
+	groups       cli.StringSlice
 }
 
 func (command *UserGrantCommand) GetCommand() cli.Command {
@@ -40,6 +41,11 @@ func (command *UserGrantCommand) GetCommand() cli.Command {
 				Usage:       "The `<permission>` level the user will have (one of REPO_READ, REPO_WRITE, REPO_ADMIN)",
 				Destination: &command.flags.permission,
 			},
+			cli.StringSliceFlag{
+				Name:  "group",
+				Usage: "The `<group>` to be added on the repository. Can be repeated multiple times",
+				Value: &command.flags.groups,
+			},
 		},
 		BashComplete: func(c *cli.Context) {
 			helper.AutoComplete(c, command.Settings.GetFileCache())
@@ -53,8 +59,8 @@ func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
 		return fmt.Errorf("flag --repository is required.")
 	}
 
-	if len(command.flags.usernames) == 0 {
-		return fmt.Errorf("flag --username is required.")
+	if len(command.flags.usernames) == 0 && len(command.flags.groups) == 0 {
+		return fmt.Errorf("At least one --username or --group is required.")
 	}
 
 	if len(command.flags.permission) == 0 {
@@ -89,6 +95,22 @@ func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
 				return fmt.Errorf("repo %s, user %s, permission %s - reason: %s\n", repositorySlug, username, command.flags.permission, err)
 			} else {
 				fmt.Printf("[OK] repo %s, user %s, permission %s\n", repositorySlug, username, command.flags.permission)
+			}
+		}
+
+		for _, group := range command.flags.groups {
+			params := bitclient.SetRepositoryGroupPermissionRequest{
+				Name:       group,
+				Permission: command.flags.permission,
+			}
+
+			err := client.SetRepositoryGroupPermission(repo.Project.Key, repositorySlug, params)
+
+			if err != nil {
+				fmt.Printf("[KO] rep%s - %s\n", group, err)
+				return fmt.Errorf("repo %s, group %s, permission %s - reason: %s\n", repositorySlug, group, command.flags.permission, err)
+			} else {
+				fmt.Printf("[OK] repo %s, group %s, permission %s\n", repositorySlug, group, command.flags.permission)
 			}
 		}
 	}
