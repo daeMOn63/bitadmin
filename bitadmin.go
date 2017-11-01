@@ -35,7 +35,7 @@ func main() {
 		Settings: globalSettings,
 	}
 
-	userCommand := &user.UserCommand{
+	userCommand := &user.Command{
 		Settings: globalSettings,
 	}
 

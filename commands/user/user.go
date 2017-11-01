@@ -1,3 +1,4 @@
+// Package user hold the actions on the Bitbucket users
 package user
 
 import (
@@ -5,15 +6,17 @@ import (
 	"github.com/urfave/cli"
 )
 
-type UserCommand struct {
+// Command define base command for user actions
+type Command struct {
 	Settings *settings.BitAdminSettings
 }
 
-func (rc *UserCommand) GetCommand() cli.Command {
+// GetCommand provide a ready to use cli.Command
+func (rc *Command) GetCommand() cli.Command {
 
-	userGrantCommand := &UserGrantCommand{
+	userGrantCommand := &GrantCommand{
 		Settings: rc.Settings,
-		flags:    &UserGrantCommandFlags{},
+		flags:    &GrantCommandFlags{},
 	}
 
 	return cli.Command{

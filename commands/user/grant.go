@@ -1,3 +1,4 @@
+// Package user hold the actions on the Bitbucket users
 package user
 
 import (
@@ -8,18 +9,21 @@ import (
 	"github.com/urfave/cli"
 )
 
-type UserGrantCommand struct {
+// GrantCommand define base struct for user grant action
+type GrantCommand struct {
 	Settings *settings.BitAdminSettings
-	flags    *UserGrantCommandFlags
+	flags    *GrantCommandFlags
 }
 
-type UserGrantCommandFlags struct {
+// GrantCommandFlags hold the flag values of the use grant action
+type GrantCommandFlags struct {
 	repositories cli.StringSlice
 	usernames    cli.StringSlice
 	permission   string
 }
 
-func (command *UserGrantCommand) GetCommand() cli.Command {
+// GetCommand provide a ready to use cli.Command
+func (command *GrantCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "grant",
 		Usage:  "Grant users permission on repositories",
@@ -47,18 +51,19 @@ func (command *UserGrantCommand) GetCommand() cli.Command {
 	}
 }
 
-func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
+// GrantAction permit to give repository's permission to given users
+func (command *GrantCommand) GrantAction(context *cli.Context) error {
 
 	if len(command.flags.repositories) == 0 {
-		return fmt.Errorf("flag --repository is required.")
+		return fmt.Errorf("flag --repository is required")
 	}
 
 	if len(command.flags.usernames) == 0 {
-		return fmt.Errorf("At least one --username is required.")
+		return fmt.Errorf("At least one --username is required")
 	}
 
 	if len(command.flags.permission) == 0 {
-		return fmt.Errorf("flag --permission is required.")
+		return fmt.Errorf("flag --permission is required")
 	}
 
 	fileCache := command.Settings.GetFileCache()
@@ -86,10 +91,10 @@ func (command *UserGrantCommand) GrantAction(context *cli.Context) error {
 
 			if err != nil {
 				fmt.Printf("[KO] rep%s - %s\n", username, err)
-				return fmt.Errorf("repo %s, user %s, permission %s - reason: %s\n", repositorySlug, username, command.flags.permission, err)
-			} else {
-				fmt.Printf("[OK] repo %s, user %s, permission %s\n", repositorySlug, username, command.flags.permission)
+				return fmt.Errorf("repo %s, user %s, permission %s - reason: %s", repositorySlug, username, command.flags.permission, err)
 			}
+
+			fmt.Printf("[OK] repo %s, user %s, permission %s\n", repositorySlug, username, command.flags.permission)
 		}
 	}
 
