@@ -1,3 +1,4 @@
+// Package helper provides handy func and struct to be reused in commands
 package helper
 
 import (
@@ -7,6 +8,7 @@ import (
 	"strings"
 )
 
+// PrintLinks output the bitclient.Links to stdout in a readable way
 func PrintLinks(l bitclient.Links) {
 	for typez, sublinks := range l {
 		fmt.Printf("%s:\n", typez)
@@ -19,6 +21,8 @@ func PrintLinks(l bitclient.Links) {
 		}
 	}
 }
+
+// AppAutoComplete extends the default autocomplete provided by urfave/cli by filtering on flags when - or -- is typed
 func AppAutoComplete(c *cli.Context) {
 	flags := c.GlobalFlagNames()
 	for _, flag := range flags {
@@ -38,8 +42,9 @@ func AppAutoComplete(c *cli.Context) {
 	cli.DefaultAppComplete(c)
 }
 
+// AutoComplete enhance the autocompletion by responding to project / user / username / repository... flags and printing
+// available values from the cache.
 func AutoComplete(c *cli.Context, cache *FileCache) {
-	// Autocomplete projects / user / repo
 	args := c.Parent().Args()
 	lastArg := args[len(args)-1]
 
