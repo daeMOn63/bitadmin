@@ -58,6 +58,8 @@ func (command *Command) WarmupCacheAction(context *cli.Context) error {
 		return err
 	}
 
+	cache.Clear()
+
 	maxPagedRequest := bitclient.PagedRequest{
 		Limit: 10000,
 		Start: 0,
