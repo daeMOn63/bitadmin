@@ -44,12 +44,13 @@ func AppAutoComplete(c *cli.Context) {
 
 // AutoComplete enhance the autocompletion by responding to project / user / username / repository... flags and printing
 // available values from the cache.
+// Everything that get printed by this function could be used as autocompletion value. Space is used as separator.
 func AutoComplete(c *cli.Context, cache *FileCache) {
 	args := c.Parent().Args()
 	lastArg := args[len(args)-1]
 
 	switch lastArg {
-	case "--project":
+	case "--project", "--sourceProject", "--targetProject":
 		for _, project := range cache.Projects {
 			fmt.Fprintln(c.App.Writer, project.Key)
 		}
@@ -58,9 +59,7 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 		for _, user := range cache.Users {
 			fmt.Fprintln(c.App.Writer, user.Slug)
 		}
-	case "--repository":
-	case "--sourceRepository":
-	case "--targetRepository":
+	case "--repository", "--sourceRepository", "--targetRepository":
 		for _, repo := range cache.Repositories {
 			fmt.Fprintln(c.App.Writer, repo.Slug)
 		}
