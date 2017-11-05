@@ -16,7 +16,9 @@ type CloneSettingsCommand struct {
 
 // CloneSettingsCommandFlags hold flag values for the CloneSettingsCommand
 type CloneSettingsCommandFlags struct {
+	sourceProject       string
 	sourceRepository    string
+	targetProject       string
 	targetRepository    string
 	userPermissions     bool
 	groupPermissions    bool
@@ -32,9 +34,19 @@ func (command *CloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli
 		Action: command.CloneSettingsAction,
 		Flags: []cli.Flag{
 			cli.StringFlag{
+				Name:        "sourceProject",
+				Usage:       "The `<sourceProject>` of the source repository",
+				Destination: &command.flags.sourceProject,
+			},
+			cli.StringFlag{
 				Name:        "sourceRepository",
 				Usage:       "The `<sourceRepository>` to read the settings from",
 				Destination: &command.flags.sourceRepository,
+			},
+			cli.StringFlag{
+				Name:        "targetProject",
+				Usage:       "The `<targetProject>` of the target repository",
+				Destination: &command.flags.targetProject,
 			},
 			cli.StringFlag{
 				Name:        "targetRepository",
@@ -76,76 +88,80 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 		return err
 	}
 
-	fileCache := command.Settings.GetFileCache()
-
-	sourceRepo, err := fileCache.SearchRepositorySlug(command.flags.sourceRepository)
-	if err != nil {
-		return err
-	}
-
-	targetRepo, err := fileCache.SearchRepositorySlug(command.flags.targetRepository)
-	if err != nil {
-		return err
-	}
-
 	if command.flags.userPermissions == true {
-		err := client.CloneRepositoryUserPermissions(sourceRepo.Project.Key, sourceRepo.Slug, targetRepo.Project.Key, targetRepo.Slug)
+		err := client.CloneRepositoryUserPermissions(
+			command.flags.sourceProject,
+			command.flags.sourceRepository,
+			command.flags.targetProject,
+			command.flags.targetRepository,
+		)
+
 		if err != nil {
 			return err
 		}
 		fmt.Printf(
 			"User permissions successfully copied from %s/%s to %s/%s\n",
-			sourceRepo.Project.Key,
-			sourceRepo.Slug,
-			targetRepo.Project.Key,
-			targetRepo.Slug,
+			command.flags.sourceProject,
+			command.flags.sourceRepository,
+			command.flags.targetProject,
+			command.flags.targetRepository,
 		)
 	}
 
 	if command.flags.groupPermissions == true {
-		err := client.CloneRepositoryGroupPermissions(sourceRepo.Project.Key, sourceRepo.Slug, targetRepo.Project.Key, targetRepo.Slug)
+		err := client.CloneRepositoryGroupPermissions(
+			command.flags.sourceProject,
+			command.flags.sourceRepository,
+			command.flags.targetProject,
+			command.flags.targetRepository,
+		)
 		if err != nil {
 			return err
 		}
 		fmt.Printf(
 			"Group permissions successfully copied from %s/%s to %s/%s\n",
-			sourceRepo.Project.Key,
-			sourceRepo.Slug,
-			targetRepo.Project.Key,
-			targetRepo.Slug,
+			command.flags.sourceProject,
+			command.flags.sourceRepository,
+			command.flags.targetProject,
+			command.flags.targetRepository,
 		)
 	}
 
 	if command.flags.branchRestrictions == true {
-		err := client.CloneRepositoryMasterBranchRestrictions(sourceRepo.Project.Key, sourceRepo.Slug, targetRepo.Project.Key, targetRepo.Slug)
+		err := client.CloneRepositoryMasterBranchRestrictions(
+			command.flags.sourceProject,
+			command.flags.sourceRepository,
+			command.flags.targetProject,
+			command.flags.targetRepository,
+		)
 		if err != nil {
 			return err
 		}
 		fmt.Printf(
 			"Branch restrictions successfully copied from %s/%s to %s/%s\n",
-			sourceRepo.Project.Key,
-			sourceRepo.Slug,
-			targetRepo.Project.Key,
-			targetRepo.Slug,
+			command.flags.sourceProject,
+			command.flags.sourceRepository,
+			command.flags.targetProject,
+			command.flags.targetRepository,
 		)
 	}
 
 	if command.flags.pullRequestSettings == true {
-		settings, err := client.GetPullRequestSettings(sourceRepo.Project.Key, sourceRepo.Slug)
+		settings, err := client.GetPullRequestSettings(command.flags.sourceProject, command.flags.sourceRepository)
 		if err != nil {
 			return err
 		}
 
-		err = client.SetPullRequestSettings(targetRepo.Project.Key, targetRepo.Slug, settings)
+		err = client.SetPullRequestSettings(command.flags.targetProject, command.flags.targetRepository, settings)
 		if err != nil {
 			return err
 		}
 		fmt.Printf(
 			"Pull request settings successfully copied from %s/%s to %s/%s\n",
-			sourceRepo.Project.Key,
-			sourceRepo.Slug,
-			targetRepo.Project.Key,
-			targetRepo.Slug,
+			command.flags.sourceProject,
+			command.flags.sourceRepository,
+			command.flags.targetProject,
+			command.flags.targetRepository,
 		)
 	}
 

@@ -17,7 +17,8 @@ type ShowPermissionsCommand struct {
 
 // ShowPermissionsFlags define flags required by the ShowPermissionsAction
 type ShowPermissionsFlags struct {
-	repositorySlug string
+	project    string
+	repository string
 }
 
 // GetCommand provide a ready to use cli.Command
@@ -28,9 +29,14 @@ func (command *ShowPermissionsCommand) GetCommand(fileCache *helper.FileCache) c
 		Action: command.ShowPermissionsAction,
 		Flags: []cli.Flag{
 			cli.StringFlag{
+				Name:        "project",
+				Usage:       "The `<rproject>` of the repository",
+				Destination: &command.flags.project,
+			},
+			cli.StringFlag{
 				Name:        "repository",
 				Usage:       "The `<repository>` which to dump permissions from",
-				Destination: &command.flags.repositorySlug,
+				Destination: &command.flags.repository,
 			},
 		},
 		BashComplete: func(c *cli.Context) {
@@ -42,37 +48,33 @@ func (command *ShowPermissionsCommand) GetCommand(fileCache *helper.FileCache) c
 // ShowPermissionsAction display the current user / group permissions on given repository
 func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Context) error {
 
-	fileCache := command.Settings.GetFileCache()
-
 	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
 	}
 
-	var repository *bitclient.Repository
-	for _, repo := range fileCache.Repositories {
-		if repo.Slug == command.flags.repositorySlug {
-			repository = &repo
-			break
-		}
-	}
+	userResponse, err := client.GetRepositoryUserPermission(
+		command.flags.project,
+		command.flags.repository,
+		bitclient.GetRepositoryUserPermissionRequest{},
+	)
 
-	if repository == nil {
-		return fmt.Errorf("Cannot retrieve repository %s", command.flags.repositorySlug)
-	}
-
-	userResponse, err := client.GetRepositoryUserPermission(repository.Project.Key, repository.Slug, bitclient.GetRepositoryUserPermissionRequest{})
 	if err != nil {
 		return err
 	}
 
-	groupResponse, err := client.GetRepositoryGroupPermission(repository.Project.Key, repository.Slug, bitclient.GetRepositoryGroupPermissionRequest{})
+	groupResponse, err := client.GetRepositoryGroupPermission(
+		command.flags.project,
+		command.flags.repository,
+		bitclient.GetRepositoryGroupPermissionRequest{},
+	)
+
 	if err != nil {
 		return err
 	}
 
 	if len(userResponse.Values) <= 0 {
-		fmt.Printf("No user permissions found on repository %s\n", command.flags.repositorySlug)
+		fmt.Printf("No user permissions found on repository %s\n", command.flags.repository)
 	}
 
 	for _, userPermission := range userResponse.Values {
@@ -80,7 +82,7 @@ func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Contex
 	}
 
 	if len(groupResponse.Values) <= 0 {
-		fmt.Printf("No group permissions found on repository %s\n", command.flags.repositorySlug)
+		fmt.Printf("No group permissions found on repository %s\n", command.flags.repository)
 	}
 
 	for _, groupPermission := range groupResponse.Values {
