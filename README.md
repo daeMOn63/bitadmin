@@ -140,8 +140,13 @@ This is the current supported commands tree:
     |- warmup
 - repository
     |- create
+    |- clone-settings
+    |- set-branch-restriction
+    |- show-permission
     |- enable-sonar-cleanup
 - user
+    |- grant
+- group
     |- grant
 ```
 
