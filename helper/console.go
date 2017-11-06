@@ -65,6 +65,8 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 		}
 	case "--permission":
 		fmt.Println("REPO_READ REPO_WRITE REPO_ADMIN")
+	case "--restriction":
+		fmt.Println("read-only no-deletes fast-forward-only pull-request-only")
 	default:
 		if lastArg[:2] == "--" {
 			flag, err := getFlag(c, lastArg[2:])

@@ -35,6 +35,11 @@ func (rc *Command) GetCommand() cli.Command {
 		flags:    &CloneSettingsCommandFlags{},
 	}
 
+	setBranchRestrictionCommand := &SetBranchRestrictionCommand{
+		Settings: rc.Settings,
+		flags:    &SetBranchRestrictionCommandFlags{},
+	}
+
 	return cli.Command{
 		Name:  "repository",
 		Usage: "Repository opertations",
@@ -43,6 +48,7 @@ func (rc *Command) GetCommand() cli.Command {
 			enableSonarCleanupCommand.GetCommand(),
 			showPermissionsCommand.GetCommand(fileCache),
 			cloneSettingsCommand.GetCommand(fileCache),
+			setBranchRestrictionCommand.GetCommand(fileCache),
 		},
 	}
 }
