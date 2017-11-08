@@ -68,7 +68,7 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 	case "--restriction":
 		fmt.Println("read-only no-deletes fast-forward-only pull-request-only")
 	default:
-		if lastArg[:2] == "--" {
+		if len(lastArg) > 2 && lastArg[:2] == "--" {
 			flag, err := getFlag(c, lastArg[2:])
 			if err == nil {
 				if _, ok := flag.(cli.BoolFlag); ok == false {
