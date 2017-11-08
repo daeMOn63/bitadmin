@@ -142,6 +142,8 @@ This is the current supported commands tree:
     |- create
     |- clone-settings
     |- set-branch-restriction
+    |- set-branching-model
+    |- set-pr-settings
     |- show-permission
     |- enable-sonar-cleanup
 - user
