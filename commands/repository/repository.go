@@ -45,6 +45,11 @@ func (rc *Command) GetCommand() cli.Command {
 		flags:    &PullRequestSettingsCommandFlags{},
 	}
 
+	branchingModelCommand := &BranchingModelCommand{
+		Settings: rc.Settings,
+		flags:    &BranchingModelCommandFlags{},
+	}
+
 	return cli.Command{
 		Name:  "repository",
 		Usage: "Repository opertations",
@@ -55,6 +60,7 @@ func (rc *Command) GetCommand() cli.Command {
 			cloneSettingsCommand.GetCommand(fileCache),
 			setBranchRestrictionCommand.GetCommand(fileCache),
 			pullRequestSettingsCommand.GetCommand(fileCache),
+			branchingModelCommand.GetCommand(fileCache),
 		},
 	}
 }

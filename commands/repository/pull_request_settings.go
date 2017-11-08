@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// PullRequestSettingsCommand define base struct for SetBranchRestriction actions
+// PullRequestSettingsCommand define base struct for PullRequestSettings actions
 type PullRequestSettingsCommand struct {
 	Settings *settings.BitAdminSettings
 	flags    *PullRequestSettingsCommandFlags

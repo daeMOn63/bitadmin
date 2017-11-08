@@ -77,7 +77,7 @@ func (command *SetBranchRestrictionCommand) GetCommand(fileCache *helper.FileCac
 	}
 }
 
-// SetBranchRestrictionAction use flag values to create a new repository
+// SetBranchRestrictionAction use flag values tp set the branch restrictions on given repository
 func (command *SetBranchRestrictionCommand) SetBranchRestrictionAction(context *cli.Context) error {
 
 	client, err := command.Settings.GetAPIClient()
