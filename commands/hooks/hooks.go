@@ -14,6 +14,14 @@ type Command struct {
 // GetCommand provide a ready to use cli.Command
 func (command *Command) GetCommand() cli.Command {
 
+	eolHookCommand := EolHookCommand{
+		Settings: command.Settings,
+	}
+
+	pubHookCommand := PubHookCommand{
+		Settings: command.Settings,
+	}
+
 	yaccHookCommand := YaccHookCommand{
 		Settings: command.Settings,
 	}
@@ -22,6 +30,8 @@ func (command *Command) GetCommand() cli.Command {
 		Name:  "hooks",
 		Usage: "Hooks operations",
 		Subcommands: []cli.Command{
+			eolHookCommand.GetCommand(),
+			pubHookCommand.GetCommand(),
 			yaccHookCommand.GetCommand(),
 		},
 	}
