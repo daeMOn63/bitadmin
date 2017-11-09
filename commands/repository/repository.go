@@ -12,47 +12,47 @@ type Command struct {
 }
 
 // GetCommand provide a ready to use cli.Command
-func (rc *Command) GetCommand() cli.Command {
+func (command *Command) GetCommand() cli.Command {
 
-	fileCache := rc.Settings.GetFileCache()
+	fileCache := command.Settings.GetFileCache()
 
 	repositoryCreateCommand := &CreateCommand{
-		Settings: rc.Settings,
+		Settings: command.Settings,
 		flags:    &CreateCommandFlags{},
 	}
 
 	enableSonarCleanupCommand := &EnableSonarCleanupCommand{
-		Settings: rc.Settings,
+		Settings: command.Settings,
 	}
 
 	showPermissionsCommand := &ShowPermissionsCommand{
-		Settings: rc.Settings,
+		Settings: command.Settings,
 		flags:    &ShowPermissionsFlags{},
 	}
 
 	cloneSettingsCommand := &CloneSettingsCommand{
-		Settings: rc.Settings,
+		Settings: command.Settings,
 		flags:    &CloneSettingsCommandFlags{},
 	}
 
 	setBranchRestrictionCommand := &SetBranchRestrictionCommand{
-		Settings: rc.Settings,
+		Settings: command.Settings,
 		flags:    &SetBranchRestrictionCommandFlags{},
 	}
 
 	pullRequestSettingsCommand := &PullRequestSettingsCommand{
-		Settings: rc.Settings,
+		Settings: command.Settings,
 		flags:    &PullRequestSettingsCommandFlags{},
 	}
 
 	branchingModelCommand := &BranchingModelCommand{
-		Settings: rc.Settings,
+		Settings: command.Settings,
 		flags:    &BranchingModelCommandFlags{},
 	}
 
 	return cli.Command{
 		Name:  "repository",
-		Usage: "Repository opertations",
+		Usage: "Repository operations",
 		Subcommands: []cli.Command{
 			repositoryCreateCommand.GetCommand(fileCache),
 			enableSonarCleanupCommand.GetCommand(),
