@@ -30,7 +30,7 @@ func (command *YaccHookCommand) GetCommand() cli.Command {
 	}
 
 	return cli.Command{
-		Name:  "yacc",
+		Name:  "yet-another-commit-checker",
 		Usage: "Yet Another Commit Checker hook operations",
 		Subcommands: []cli.Command{
 			yaccEnableCommand.GetCommand(),

@@ -150,6 +150,16 @@ This is the current supported commands tree:
     |- grant
 - group
     |- grant
+- hooks
+    |- protect-unmerged-branch
+        |- enable
+        |- disable
+    |- stash-eol-check
+        |- enable
+        |- disable
+    |- yet-another-commit-checker
+        |- enable
+        |- disable
 ```
 
 You can get more informations about a particular command or group by using the --help flag, available on everything :
