@@ -153,7 +153,7 @@ func (command *SetBranchRestrictionCommand) SetBranchRestrictionAction(context *
 	}
 
 	fmt.Printf(
-		"Done %s %s restriction on branch %s of %s/%s\n",
+		"[OK] %s %s restriction on branch %s of %s/%s\n",
 		action,
 		command.flags.restriction,
 		command.flags.branchRef,

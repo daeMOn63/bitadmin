@@ -91,7 +91,7 @@ func (command *GrantCommand) GrantAction(context *cli.Context) error {
 
 		if err != nil {
 			return fmt.Errorf(
-				"error - repo %s/%s, user %s, permission %s - reason: %s",
+				"repo %s/%s, user %s, permission %s - reason: %s",
 				command.flags.project,
 				command.flags.repository,
 				username,
@@ -108,8 +108,6 @@ func (command *GrantCommand) GrantAction(context *cli.Context) error {
 			command.flags.permission,
 		)
 	}
-
-	fmt.Printf("Done granting user permissions\n")
 
 	return nil
 }

@@ -95,7 +95,7 @@ func (command *PullRequestSettingsCommand) SetPullRequestSettingsAction(context 
 		return err
 	}
 
-	fmt.Printf("Pull request settings successfully set on %s/%s\n", command.flags.project, command.flags.repository)
+	fmt.Printf("[OK] Pull request settings successfully set on %s/%s\n", command.flags.project, command.flags.repository)
 
 	return nil
 

@@ -173,7 +173,7 @@ func (command *BranchingModelCommand) SetBranchingModelAction(context *cli.Conte
 		return err
 	}
 
-	fmt.Printf("Sucessfully set branching model for repository %s/%s\n", command.flags.project, command.flags.repository)
+	fmt.Printf("[OK] set branching model for repository %s/%s\n", command.flags.project, command.flags.repository)
 
 	return nil
 }

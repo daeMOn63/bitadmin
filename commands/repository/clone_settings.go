@@ -119,7 +119,7 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 			return err
 		}
 		fmt.Printf(
-			"Group permissions successfully copied from %s/%s to %s/%s\n",
+			"[OK] Group permissions successfully copied from %s/%s to %s/%s\n",
 			command.flags.sourceProject,
 			command.flags.sourceRepository,
 			command.flags.targetProject,
@@ -138,7 +138,7 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 			return err
 		}
 		fmt.Printf(
-			"Branch restrictions successfully copied from %s/%s to %s/%s\n",
+			"[OK] Branch restrictions successfully copied from %s/%s to %s/%s\n",
 			command.flags.sourceProject,
 			command.flags.sourceRepository,
 			command.flags.targetProject,
@@ -157,7 +157,7 @@ func (command *CloneSettingsCommand) CloneSettingsAction(context *cli.Context) e
 			return err
 		}
 		fmt.Printf(
-			"Pull request settings successfully copied from %s/%s to %s/%s\n",
+			"[OK] Pull request settings successfully copied from %s/%s to %s/%s\n",
 			command.flags.sourceProject,
 			command.flags.sourceRepository,
 			command.flags.targetProject,

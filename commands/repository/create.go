@@ -99,7 +99,7 @@ func (command *CreateCommand) CreateRepositoryAction(context *cli.Context) error
 		return err
 	}
 
-	fmt.Println("Repository created")
+	fmt.Println("[OK] Repository created")
 	fmt.Println("Quick links :")
 	helper.PrintLinks(resp.Links)
 	fmt.Println()

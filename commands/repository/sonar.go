@@ -36,7 +36,7 @@ func (command *EnableSonarCleanupCommand) EnableSonarCleanupAction(context *cli.
 				return err
 			}
 
-			fmt.Printf("Updated sonar cleanup settings for repository %s/%s\n", repository.Project.Key, repository.Slug)
+			fmt.Printf("[OK] Updated sonar cleanup settings for repository %s/%s\n", repository.Project.Key, repository.Slug)
 		}
 	}
 
