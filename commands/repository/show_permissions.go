@@ -22,7 +22,7 @@ type ShowPermissionsFlags struct {
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *ShowPermissionsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+func (command *ShowPermissionsCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "show-permission",
 		Usage:  "Show permissions on given repository",
@@ -40,7 +40,7 @@ func (command *ShowPermissionsCommand) GetCommand(fileCache *helper.FileCache) c
 			},
 		},
 		BashComplete: func(c *cli.Context) {
-			helper.AutoComplete(c, fileCache)
+			helper.AutoComplete(c, command.Settings.GetFileCache())
 		},
 	}
 }

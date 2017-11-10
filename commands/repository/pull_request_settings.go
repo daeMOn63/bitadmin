@@ -26,7 +26,7 @@ type PullRequestSettingsCommandFlags struct {
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *PullRequestSettingsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+func (command *PullRequestSettingsCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "set-pr-settings",
 		Usage:  "Set pull request settings on given repository",
@@ -69,7 +69,7 @@ func (command *PullRequestSettingsCommand) GetCommand(fileCache *helper.FileCach
 			},
 		},
 		BashComplete: func(c *cli.Context) {
-			helper.AutoComplete(c, fileCache)
+			helper.AutoComplete(c, command.Settings.GetFileCache())
 		},
 	}
 }

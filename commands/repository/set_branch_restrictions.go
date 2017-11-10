@@ -29,7 +29,7 @@ type SetBranchRestrictionCommandFlags struct {
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *SetBranchRestrictionCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+func (command *SetBranchRestrictionCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "set-branch-restriction",
 		Usage:  "Set branch restrictions on given repository",
@@ -72,7 +72,7 @@ func (command *SetBranchRestrictionCommand) GetCommand(fileCache *helper.FileCac
 			},
 		},
 		BashComplete: func(c *cli.Context) {
-			helper.AutoComplete(c, fileCache)
+			helper.AutoComplete(c, command.Settings.GetFileCache())
 		},
 	}
 }

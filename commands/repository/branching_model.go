@@ -32,7 +32,7 @@ type BranchingModelCommandFlags struct {
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *BranchingModelCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+func (command *BranchingModelCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "set-branching-model",
 		Usage:  "Set branching model options on given repository",
@@ -100,7 +100,7 @@ func (command *BranchingModelCommand) GetCommand(fileCache *helper.FileCache) cl
 			},
 		},
 		BashComplete: func(c *cli.Context) {
-			helper.AutoComplete(c, fileCache)
+			helper.AutoComplete(c, command.Settings.GetFileCache())
 		},
 	}
 }

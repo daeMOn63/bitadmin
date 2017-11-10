@@ -24,7 +24,7 @@ type CreateCommandFlags struct {
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *CreateCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+func (command *CreateCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "create",
 		Usage:  "Create a new repository",
@@ -53,7 +53,7 @@ func (command *CreateCommand) GetCommand(fileCache *helper.FileCache) cli.Comman
 			},
 		},
 		BashComplete: func(c *cli.Context) {
-			helper.AutoComplete(c, fileCache)
+			helper.AutoComplete(c, command.Settings.GetFileCache())
 		},
 	}
 }

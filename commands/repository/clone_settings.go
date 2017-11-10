@@ -27,7 +27,7 @@ type CloneSettingsCommandFlags struct {
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *CloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli.Command {
+func (command *CloneSettingsCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "clone-settings",
 		Usage:  "Clone various settings from a repository to another",
@@ -75,7 +75,7 @@ func (command *CloneSettingsCommand) GetCommand(fileCache *helper.FileCache) cli
 			},
 		},
 		BashComplete: func(c *cli.Context) {
-			helper.AutoComplete(c, fileCache)
+			helper.AutoComplete(c, command.Settings.GetFileCache())
 		},
 	}
 }

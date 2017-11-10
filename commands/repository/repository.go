@@ -14,8 +14,6 @@ type Command struct {
 // GetCommand provide a ready to use cli.Command
 func (command *Command) GetCommand() cli.Command {
 
-	fileCache := command.Settings.GetFileCache()
-
 	repositoryCreateCommand := &CreateCommand{
 		Settings: command.Settings,
 		flags:    &CreateCommandFlags{},
@@ -54,13 +52,13 @@ func (command *Command) GetCommand() cli.Command {
 		Name:  "repository",
 		Usage: "Repository operations",
 		Subcommands: []cli.Command{
-			repositoryCreateCommand.GetCommand(fileCache),
+			repositoryCreateCommand.GetCommand(),
 			enableSonarCleanupCommand.GetCommand(),
-			showPermissionsCommand.GetCommand(fileCache),
-			cloneSettingsCommand.GetCommand(fileCache),
-			setBranchRestrictionCommand.GetCommand(fileCache),
-			pullRequestSettingsCommand.GetCommand(fileCache),
-			branchingModelCommand.GetCommand(fileCache),
+			showPermissionsCommand.GetCommand(),
+			cloneSettingsCommand.GetCommand(),
+			setBranchRestrictionCommand.GetCommand(),
+			pullRequestSettingsCommand.GetCommand(),
+			branchingModelCommand.GetCommand(),
 		},
 	}
 }
