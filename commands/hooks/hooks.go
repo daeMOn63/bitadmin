@@ -26,6 +26,10 @@ func (command *Command) GetCommand() cli.Command {
 		Settings: command.Settings,
 	}
 
+	rfpHookCommand := RfpHookCommand{
+		Settings: command.Settings,
+	}
+
 	return cli.Command{
 		Name:  "hooks",
 		Usage: "Hooks operations",
@@ -33,6 +37,7 @@ func (command *Command) GetCommand() cli.Command {
 			eolHookCommand.GetCommand(),
 			pubHookCommand.GetCommand(),
 			yaccHookCommand.GetCommand(),
+			rfpHookCommand.GetCommand(),
 		},
 	}
 }

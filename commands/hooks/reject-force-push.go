@@ -9,29 +9,29 @@ import (
 	"github.com/urfave/cli"
 )
 
-const pubHookKey = "com.atlassian.stash.plugin.stash-protect-unmerged-branch-hook:protect-unmerged-branch-hook"
+const rfpHookKey = "com.atlassian.bitbucket.server.bitbucket-bundled-hooks:force-push-hook"
 
-// PubHookCommand define the command for the Protect Unmerged Branch hook
-type PubHookCommand struct {
+// RfpHookCommand define the command for the Reject Force Push hook
+type RfpHookCommand struct {
 	Settings *settings.BitAdminSettings
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *PubHookCommand) GetCommand() cli.Command {
+func (command *RfpHookCommand) GetCommand() cli.Command {
 
-	pubEnableCommand := PubHookEnableCommand{
+	pubEnableCommand := RfpHookEnableCommand{
 		Settings: command.Settings,
-		flags:    &PubHookEnableCommandFlags{},
+		flags:    &RfpHookEnableCommandFlags{},
 	}
 
-	pubDisableCommand := PubHookDisableCommand{
+	pubDisableCommand := RfpHookDisableCommand{
 		Settings: command.Settings,
-		flags:    &PubHookDisableCommandFlags{},
+		flags:    &RfpHookDisableCommandFlags{},
 	}
 
 	return cli.Command{
-		Name:  "protect-unmerged-branch",
-		Usage: "Protect Unmerged Branch hook operations",
+		Name:  "reject-force-push",
+		Usage: "Reject Force Push hook operations",
 		Subcommands: []cli.Command{
 			pubEnableCommand.GetCommand(),
 			pubDisableCommand.GetCommand(),
@@ -39,23 +39,23 @@ func (command *PubHookCommand) GetCommand() cli.Command {
 	}
 }
 
-// PubHookEnableCommand define the command to enable the PUB hook
-type PubHookEnableCommand struct {
+// RfpHookEnableCommand define the command to enable the PUB hook
+type RfpHookEnableCommand struct {
 	Settings *settings.BitAdminSettings
-	flags    *PubHookEnableCommandFlags
+	flags    *RfpHookEnableCommandFlags
 }
 
-// PubHookEnableCommandFlags define the flags for the PubHookEnableCommand
-type PubHookEnableCommandFlags struct {
+// RfpHookEnableCommandFlags define the flags for the RfpHookEnableCommand
+type RfpHookEnableCommandFlags struct {
 	project    string
 	repository string
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *PubHookEnableCommand) GetCommand() cli.Command {
+func (command *RfpHookEnableCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "enable",
-		Usage:  "Enable Protect Unmerged Branch hook",
+		Usage:  "Enable Reject Force Push hook",
 		Action: command.EnableAction,
 		Flags: []cli.Flag{
 			cli.StringFlag{
@@ -76,7 +76,7 @@ func (command *PubHookEnableCommand) GetCommand() cli.Command {
 }
 
 // EnableAction contains logic to turn on the hook and set its configuration
-func (command *PubHookEnableCommand) EnableAction(context *cli.Context) error {
+func (command *RfpHookEnableCommand) EnableAction(context *cli.Context) error {
 	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func (command *PubHookEnableCommand) EnableAction(context *cli.Context) error {
 	err = client.EnableHook(
 		command.flags.project,
 		command.flags.repository,
-		pubHookKey,
+		rfpHookKey,
 		nil,
 	)
 
@@ -100,28 +100,28 @@ func (command *PubHookEnableCommand) EnableAction(context *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf("[OK] Enabled and configured Protect Unmerged Branch hook on %s/%s\n", command.flags.project, command.flags.repository)
+	fmt.Printf("[OK] Enabled and configured Reject Force Push hook on %s/%s\n", command.flags.project, command.flags.repository)
 
 	return nil
 }
 
-// PubHookDisableCommand define the command to disable the YACC hook
-type PubHookDisableCommand struct {
+// RfpHookDisableCommand define the command to disable the YACC hook
+type RfpHookDisableCommand struct {
 	Settings *settings.BitAdminSettings
-	flags    *PubHookDisableCommandFlags
+	flags    *RfpHookDisableCommandFlags
 }
 
-// PubHookDisableCommandFlags define the flags of the PubHookDisableCommand
-type PubHookDisableCommandFlags struct {
+// RfpHookDisableCommandFlags define the flags of the RfpHookDisableCommand
+type RfpHookDisableCommandFlags struct {
 	project    string
 	repository string
 }
 
 // GetCommand provide a ready to use cli.Command
-func (command *PubHookDisableCommand) GetCommand() cli.Command {
+func (command *RfpHookDisableCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "disable",
-		Usage:  "Disable Protect Unmerged Branch hook",
+		Usage:  "Disable Reject Force Push hook",
 		Action: command.DisableAction,
 		Flags: []cli.Flag{
 			cli.StringFlag{
@@ -142,7 +142,7 @@ func (command *PubHookDisableCommand) GetCommand() cli.Command {
 }
 
 // DisableAction contains logic to turn on the hook and set its configuration
-func (command *PubHookDisableCommand) DisableAction(context *cli.Context) error {
+func (command *RfpHookDisableCommand) DisableAction(context *cli.Context) error {
 	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
@@ -155,13 +155,13 @@ func (command *PubHookDisableCommand) DisableAction(context *cli.Context) error 
 		return errors.New("--repository flag is required")
 	}
 
-	err = client.DisableHook(command.flags.project, command.flags.repository, pubHookKey)
+	err = client.DisableHook(command.flags.project, command.flags.repository, rfpHookKey)
 
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("[OK] Disabled Protect Unmerged Branch hook on %s/%s\n", command.flags.project, command.flags.repository)
+	fmt.Printf("[OK] Disabled Reject Force Push hook on %s/%s\n", command.flags.project, command.flags.repository)
 
 	return nil
 }
