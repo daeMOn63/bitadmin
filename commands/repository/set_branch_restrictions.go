@@ -127,7 +127,10 @@ func (command *SetBranchRestrictionCommand) SetBranchRestrictionAction(context *
 
 			var origUserSlugs []string
 			for _, u := range restriction.Users {
-				origUserSlugs = append(origUserSlugs, u.Slug)
+				// We can remove inactive user accounts
+				if u.Active == true {
+					origUserSlugs = append(origUserSlugs, u.Slug)
+				}
 			}
 
 			// Keep same matcher
