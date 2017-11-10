@@ -160,6 +160,9 @@ This is the current supported commands tree:
     |- yet-another-commit-checker
         |- enable
         |- disable
+    |- reject-force-push
+        |- enable
+        |- disable
 ```
 
 You can get more informations about a particular command or group by using the --help flag, available on everything :
