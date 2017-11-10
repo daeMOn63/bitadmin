@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/daeMOn63/bitadmin/commands/cache"
 	"github.com/daeMOn63/bitadmin/commands/group"
 	"github.com/daeMOn63/bitadmin/commands/hooks"
@@ -9,6 +8,7 @@ import (
 	"github.com/daeMOn63/bitadmin/commands/user"
 	"github.com/daeMOn63/bitadmin/helper"
 	"github.com/daeMOn63/bitadmin/settings"
+	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"os"
 	"sort"
@@ -64,7 +64,7 @@ func main() {
 	err := app.Run(os.Args)
 
 	if err != nil {
-		fmt.Fprintf(cli.ErrWriter, "\nError: %s\n", err.Error())
+		color.New(color.FgRed).Fprintf(cli.ErrWriter, "\nError: %s\n", err.Error())
 		os.Exit(1)
 	}
 }
