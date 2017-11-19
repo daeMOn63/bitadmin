@@ -25,15 +25,18 @@ type FileCache struct {
 	Repositories []bitclient.Repository
 }
 
-// SearchRepositorySlug lookup for given repository slug in cached repositories
-func (c *FileCache) SearchRepositorySlug(slug string) (*bitclient.Repository, error) {
+// FindRepositoriesBySlug lookup for given repository slug in cached repositories
+func (c *FileCache) FindRepositoriesBySlug(slug string) []bitclient.Repository {
+
+	var repositories []bitclient.Repository
+
 	for _, repo := range c.Repositories {
 		if repo.Slug == slug {
-			return &repo, nil
+			repositories = append(repositories, repo)
 		}
 	}
 
-	return nil, fmt.Errorf("cannot find repositry with slug {%s}, maybe refresh local cache ?", slug)
+	return repositories
 }
 
 func (c *FileCache) getCacheFileName() string {

@@ -51,18 +51,14 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 
 	switch lastArg {
 	case "--project", "--sourceProject", "--targetProject":
-		for _, project := range cache.Projects {
-			fmt.Fprintln(c.App.Writer, project.Key)
-		}
+		autocompleteProject(c, cache)
 	case "--user":
 	case "--username":
 		for _, user := range cache.Users {
 			fmt.Fprintln(c.App.Writer, user.Slug)
 		}
 	case "--repository", "--sourceRepository", "--targetRepository":
-		for _, repo := range cache.Repositories {
-			fmt.Fprintln(c.App.Writer, repo.Slug)
-		}
+		autocompleteRepository(c, cache)
 	case "--permission":
 		fmt.Println("REPO_READ REPO_WRITE REPO_ADMIN")
 	case "--restriction":
@@ -91,6 +87,57 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 		}
 	}
 
+}
+
+// autocompleteRepository search if project have been provided in previous arguments and autocomplete with
+// only those repositories.
+// Otherwise it will display the full repository list
+func autocompleteRepository(c *cli.Context, cache *FileCache) {
+
+	var projectKey *string
+
+	args := c.Parent().Args()
+	for i, arg := range args {
+		if arg == "--project" {
+			projectKey = &args[i+1]
+		}
+	}
+
+	for _, repo := range cache.Repositories {
+		if projectKey != nil {
+			if repo.Project.Key == *projectKey {
+				fmt.Fprintln(c.App.Writer, repo.Slug)
+			}
+		} else {
+			fmt.Fprintln(c.App.Writer, repo.Slug)
+		}
+	}
+}
+
+// autocompleteProject search if a repository have been provided in previous arguments and autocomplete with
+// only those projects.
+// Otherwise it will display the full project list.
+func autocompleteProject(c *cli.Context, cache *FileCache) {
+
+	var repositorySlug *string
+
+	args := c.Parent().Args()
+	for i, arg := range args {
+		if arg == "--repository" {
+			repositorySlug = &args[i+1]
+		}
+	}
+
+	if repositorySlug != nil {
+		repos := cache.FindRepositoriesBySlug(*repositorySlug)
+		for _, repo := range repos {
+			fmt.Fprintln(c.App.Writer, repo.Project.Key)
+		}
+	} else {
+		for _, project := range cache.Projects {
+			fmt.Fprintln(c.App.Writer, project.Key)
+		}
+	}
 }
 
 func getFlag(c *cli.Context, name string) (cli.Flag, error) {
