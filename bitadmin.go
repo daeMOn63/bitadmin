@@ -1,6 +1,9 @@
 package main
 
 import (
+	"os"
+	"sort"
+
 	"github.com/daeMOn63/bitadmin/commands/cache"
 	"github.com/daeMOn63/bitadmin/commands/group"
 	"github.com/daeMOn63/bitadmin/commands/hooks"
@@ -10,8 +13,6 @@ import (
 	"github.com/daeMOn63/bitadmin/settings"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
-	"os"
-	"sort"
 )
 
 func main() {

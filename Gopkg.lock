@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/daeMOn63/bitclient"
   packages = ["."]
-  revision = "442d4ad1c4ef6c6473059f91ea320aa63f0d4316"
+  revision = "a1273bd72e6bb61ba3e2e0231b70ee4483a1a38b"
 
 [[projects]]
   name = "github.com/dghubble/sling"
@@ -52,6 +52,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "235fe531bfc5b07e8d37df49f5d39f4b6ba7eec1bb3a5f7707d4b5e268714ba3"
+  inputs-digest = "ef810e0c9c04bb0295b402aa9f791a3502997b19843785c52ff3df974e20af35"
   solver-name = "gps-cdcl"
   solver-version = 1
