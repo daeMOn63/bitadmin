@@ -118,8 +118,7 @@ func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Contex
 	var rowList OutputRows
 
 	for _, userPermission := range userResponse.Values {
-		//fmt.Printf("user %s - %s\n", userPermission.User.Slug, userPermission.Permission)
-		rowList = append(rowList, OutputRow{
+		rowList = rowList.appendIfNew(OutputRow{
 			Name:       userPermission.User.Slug,
 			Type:       "user",
 			Project:    command.flags.project,
@@ -131,8 +130,7 @@ func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Contex
 	}
 
 	for _, groupPermission := range groupResponse.Values {
-		//fmt.Printf("group %s - %s\n", groupPermission.Group.Name, groupPermission.Permission)
-		rowList = append(rowList, OutputRow{
+		rowList = rowList.appendIfNew(OutputRow{
 			Name:       groupPermission.Group.Name,
 			Type:       "group",
 			Project:    command.flags.project,
@@ -144,58 +142,51 @@ func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Contex
 	}
 
 	for _, mergeUser := range masterRestriction.Users {
-		if rowList.containsName(mergeUser.Slug) == false {
-			rowList = append(rowList, OutputRow{
-				Name:       mergeUser.Slug,
-				Type:       "user",
-				Project:    command.flags.project,
-				Repository: command.flags.repository,
-				Read:       true,
-				Write:      true,
-				Merge:      true,
-			})
-		}
+		rowList = rowList.appendIfNew(OutputRow{
+			Name:       mergeUser.Slug,
+			Type:       "user",
+			Project:    command.flags.project,
+			Repository: command.flags.repository,
+			Read:       true,
+			Write:      true,
+			Merge:      true,
+		})
 	}
+
 	for _, mergeGroup := range masterRestriction.Groups {
-		if rowList.containsName(mergeGroup) == false {
-			rowList = append(rowList, OutputRow{
-				Name:       mergeGroup,
-				Type:       "group",
-				Project:    command.flags.project,
-				Repository: command.flags.repository,
-				Read:       true,
-				Write:      true,
-				Merge:      true,
-			})
-		}
+		rowList = rowList.appendIfNew(OutputRow{
+			Name:       mergeGroup,
+			Type:       "group",
+			Project:    command.flags.project,
+			Repository: command.flags.repository,
+			Read:       true,
+			Write:      true,
+			Merge:      true,
+		})
 	}
 
 	for _, perm := range projectUserResponse.Values {
-		if rowList.containsName(perm.User.Slug) == false {
-			rowList = append(rowList, OutputRow{
-				Name:       perm.User.Slug,
-				Type:       "user",
-				Project:    command.flags.project,
-				Repository: command.flags.repository,
-				Read:       hasRead(perm.Permission),
-				Write:      hasWrite(perm.Permission),
-				Merge:      false,
-			})
-		}
+		rowList = rowList.appendIfNew(OutputRow{
+			Name:       perm.User.Slug,
+			Type:       "user",
+			Project:    command.flags.project,
+			Repository: command.flags.repository,
+			Read:       hasRead(perm.Permission),
+			Write:      hasWrite(perm.Permission),
+			Merge:      false,
+		})
 	}
 
 	for _, perm := range projectGroupResponse.Values {
-		if rowList.containsName(perm.Group.Name) == false {
-			rowList = append(rowList, OutputRow{
-				Name:       perm.Group.Name,
-				Type:       "group",
-				Project:    command.flags.project,
-				Repository: command.flags.repository,
-				Read:       hasRead(perm.Permission),
-				Write:      hasWrite(perm.Permission),
-				Merge:      false,
-			})
-		}
+		rowList = rowList.appendIfNew(OutputRow{
+			Name:       perm.Group.Name,
+			Type:       "group",
+			Project:    command.flags.project,
+			Repository: command.flags.repository,
+			Read:       hasRead(perm.Permission),
+			Write:      hasWrite(perm.Permission),
+			Merge:      false,
+		})
 	}
 
 	fmt.Printf("%s\n", rowList)
@@ -203,18 +194,18 @@ func (command *ShowPermissionsCommand) ShowPermissionsAction(context *cli.Contex
 	return nil
 }
 
-func (rows OutputRows) containsName(name string) bool {
+func (rows OutputRows) appendIfNew(row OutputRow) OutputRows {
 	for _, r := range rows {
-		if r.Name == name {
-			return true
+		if r.Name == row.Name {
+			rows = append(rows, row)
 		}
 	}
 
-	return false
+	return rows
 }
 
 func (rows OutputRows) String() string {
-	var out string
+	out := "Name;Type;Project;Repository;Read;Write;Merge"
 	for _, row := range rows {
 		out += fmt.Sprintf("%s", row)
 	}
@@ -235,19 +226,35 @@ func (row OutputRow) String() string {
 }
 
 func hasRead(permission string) bool {
-	if permission == bitclient.REPO_ADMIN || permission == bitclient.REPO_WRITE || permission == bitclient.REPO_READ || permission == bitclient.PROJECT_READ || permission == bitclient.PROJECT_WRITE {
-		return true
-	}
+	var hasRead bool
 
-	return false
+	if write := hasWrite(permission); write == true {
+		hasRead = true
+	} else {
+		switch permission {
+		case bitclient.REPO_READ:
+		case bitclient.PROJECT_READ:
+			hasRead = true
+		default:
+			hasRead = false
+		}
+	}
+	return hasRead
 }
 
 func hasWrite(permission string) bool {
-	if permission == bitclient.REPO_ADMIN || permission == bitclient.REPO_WRITE || permission == bitclient.PROJECT_WRITE {
-		return true
+	var hasWrite bool
+
+	switch permission {
+	case bitclient.REPO_ADMIN:
+	case bitclient.REPO_WRITE:
+	case bitclient.PROJECT_WRITE:
+		hasWrite = true
+	default:
+		hasWrite = false
 	}
 
-	return false
+	return hasWrite
 }
 
 func hasMerge(slug string, branchRestriction bitclient.BranchRestriction) bool {
