@@ -3,9 +3,10 @@ package helper
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/daeMOn63/bitclient"
 	"github.com/urfave/cli"
-	"strings"
 )
 
 // PrintLinks output the bitclient.Links to stdout in a readable way
@@ -63,6 +64,8 @@ func AutoComplete(c *cli.Context, cache *FileCache) {
 		fmt.Println("REPO_READ REPO_WRITE REPO_ADMIN")
 	case "--restriction":
 		fmt.Println("read-only no-deletes fast-forward-only pull-request-only")
+	case "--branchRef":
+		fmt.Println("refs/heads/master")
 	default:
 		if len(lastArg) > 2 && lastArg[:2] == "--" {
 			flag, err := getFlag(c, lastArg[2:])

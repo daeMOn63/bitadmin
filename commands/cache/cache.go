@@ -4,6 +4,7 @@ package cache
 
 import (
 	"fmt"
+
 	"github.com/daeMOn63/bitadmin/settings"
 	"github.com/daeMOn63/bitclient"
 	"github.com/urfave/cli"
@@ -54,9 +55,6 @@ func (command *Command) WarmupCacheAction(context *cli.Context) error {
 	}
 
 	cache := command.Settings.GetFileCache()
-	if err != nil {
-		return err
-	}
 
 	cache.Clear()
 

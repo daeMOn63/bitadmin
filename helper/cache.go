@@ -4,11 +4,12 @@ package helper
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/daeMOn63/bitclient"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/daeMOn63/bitclient"
 )
 
 // Cache interface define contract for Cache implementations
@@ -37,6 +38,29 @@ func (c *FileCache) FindRepositoriesBySlug(slug string) []bitclient.Repository {
 	}
 
 	return repositories
+}
+
+// FindRepository lookup for a repository from slug and projectKey
+func (c *FileCache) FindRepository(projectKey string, repoSlug string) (bitclient.Repository, error) {
+	repos := c.FindRepositoriesBySlug(repoSlug)
+
+	for _, repo := range repos {
+		if repo.Project.Key == projectKey {
+			return repo, nil
+		}
+	}
+
+	return bitclient.Repository{}, fmt.Errorf("cannot find repository %s/%s", projectKey, repoSlug)
+}
+
+func (c *FileCache) FindUserByUsername(username string) (bitclient.User, error) {
+	for _, user := range c.Users {
+		if user.Slug == username {
+			return user, nil
+		}
+	}
+
+	return bitclient.User{}, fmt.Errorf("cannot find any user with %s username", username)
 }
 
 func (c *FileCache) getCacheFileName() string {

@@ -48,6 +48,11 @@ func (command *Command) GetCommand() cli.Command {
 		flags:    &BranchingModelCommandFlags{},
 	}
 
+	setDefaultReviewersCommand := &SetDefaultReviewersCommand{
+		Settings: command.Settings,
+		flags:    &SetDefaultReviewersCommandFlags{},
+	}
+
 	return cli.Command{
 		Name:  "repository",
 		Usage: "Repository operations",
@@ -59,6 +64,7 @@ func (command *Command) GetCommand() cli.Command {
 			setBranchRestrictionCommand.GetCommand(),
 			pullRequestSettingsCommand.GetCommand(),
 			branchingModelCommand.GetCommand(),
+			setDefaultReviewersCommand.GetCommand(),
 		},
 	}
 }
