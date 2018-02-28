@@ -19,7 +19,7 @@ type Command struct {
 func (command *Command) GetCommand() cli.Command {
 	return cli.Command{
 		Name:  "cache",
-		Usage: "Caching data for faster operation",
+		Usage: "Caching data for faster operation and autocompletion.",
 		Subcommands: []cli.Command{
 			{
 				Name:   "clear",

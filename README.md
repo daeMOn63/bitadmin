@@ -129,6 +129,11 @@ $ bitadmin --user YOUR_USERNAME --password ~/.bitadmin_secret --url http://stash
 
 And no errors should be reported.
 
+Best might be to create an alias in ~/.bashrc to avoid repeating those settings all the time:
+```
+alias bitadmin='bitadmin --user YOUR_USERNAME --password ~/.bitadmin_secret --url "http://stash.server.com"'
+```
+
 ## Available Commands List
 
 This is the current supported commands tree:
@@ -146,11 +151,13 @@ This is the current supported commands tree:
     |- set-pr-settings
     |- show-permission
     |- enable-sonar-cleanup
+    |- set-default-reviewers
 - user
     |- grant
 - group
     |- grant
 - hooks
+    |- list
     |- protect-unmerged-branch
         |- enable
         |- disable
