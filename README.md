@@ -1,7 +1,10 @@
 BitAdmin
 ===
 
-BitAdmin is a command line tool aimed to help and speed up Atlassian Bitbucket administration.
+BitAdmin is a command line tool aimed to help and speed up Atlassian Bitbucket (Self-Hosted version) administration.
+It can be easily used as it is, or wrapped inside some bash scripts to avoid repetitive and long commands.
+
+Note that it is not compatible with Bitbucket Cloud in current state.
 
 <!-- toc -->
 - [Overview](#overview)
@@ -48,6 +51,9 @@ Command line auto completion can save even more time while typing commands, as t
 - stash usernames
 - stash project keys
 - stash repository slugs
+- permissions
+- restrictions
+- branchRefs
 
 To enable it, add the following to your ~/.bashrc
 ```
