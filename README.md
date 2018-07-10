@@ -164,6 +164,7 @@ This is the current supported commands tree:
     |- unset-permissions
 - group
     |- grant
+    |- unset-permissions
 - hooks
     |- list
     |- protect-unmerged-branch

@@ -19,11 +19,17 @@ func (rc *Command) GetCommand() cli.Command {
 		flags:    &GrantCommandFlags{},
 	}
 
+	unsetPermissionsCommand := &UnsetPermissionsCommand{
+		Settings: rc.Settings,
+		flags:    &UnsetPermissionsCommandFlags{},
+	}
+
 	return cli.Command{
 		Name:  "group",
 		Usage: "Group opertations",
 		Subcommands: []cli.Command{
 			grantCommand.GetCommand(),
+			unsetPermissionsCommand.GetCommand(),
 		},
 	}
 }

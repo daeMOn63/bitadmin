@@ -1,5 +1,5 @@
 // Package repository hold actions on the Bitbucket repositories
-package user
+package group
 
 import (
 	"fmt"
@@ -20,14 +20,14 @@ type UnsetPermissionsCommand struct {
 type UnsetPermissionsCommandFlags struct {
 	project    string
 	repository string
-	usernames  cli.StringSlice
+	groups     cli.StringSlice
 }
 
 // GetCommand provide a ready to use cli.Command
 func (command *UnsetPermissionsCommand) GetCommand() cli.Command {
 	return cli.Command{
 		Name:   "unset-permissions",
-		Usage:  "Unset users permissions on given repository",
+		Usage:  "Unset groups permissions on given repository",
 		Action: command.UnsetPermissionsAction,
 		Flags: []cli.Flag{
 			cli.StringFlag{
@@ -41,9 +41,9 @@ func (command *UnsetPermissionsCommand) GetCommand() cli.Command {
 				Destination: &command.flags.repository,
 			},
 			cli.StringSliceFlag{
-				Name:  "username",
-				Usage: "The `<username>` to unset permissions for. Can be repeated multiple times",
-				Value: &command.flags.usernames,
+				Name:  "name",
+				Usage: "The `<name>` of the group to unset permissions for. Can be repeated multiple times",
+				Value: &command.flags.groups,
 			},
 		},
 		BashComplete: func(c *cli.Context) {
@@ -63,36 +63,36 @@ func (command *UnsetPermissionsCommand) UnsetPermissionsAction(context *cli.Cont
 		return fmt.Errorf("flag --repository is required")
 	}
 
-	if len(command.flags.usernames) == 0 {
-		return fmt.Errorf("At least one --username is required")
+	if len(command.flags.groups) == 0 {
+		return fmt.Errorf("At least one --name is required")
 	}
 
 	client, err := command.Settings.GetAPIClient()
 	if err != nil {
 		return err
 	}
-	for _, username := range command.flags.usernames {
-		params := bitclient.UnsetRepositoryUserPermissionRequest{
-			Username: username,
+	for _, group := range command.flags.groups {
+		params := bitclient.UnsetRepositoryGroupPermissionRequest{
+			Name: group,
 		}
 
-		err := client.UnsetRepositoryUserPermission(command.flags.project, command.flags.repository, params)
+		err := client.UnsetRepositoryGroupPermission(command.flags.project, command.flags.repository, params)
 
 		if err != nil {
 			return fmt.Errorf(
-				"Cannot unset permissions for repo %s/%s, user %s - reason: %s",
+				"Cannot unset permissions for repo %s/%s, group %s - reason: %s",
 				command.flags.project,
 				command.flags.repository,
-				username,
+				group,
 				err,
 			)
 		}
 
 		fmt.Printf(
-			"[OK] Permissions removed on repo %s/%s, user %s\n",
+			"[OK] Permissions removed on repo %s/%s, group %s\n",
 			command.flags.project,
 			command.flags.repository,
-			username,
+			group,
 		)
 	}
 
