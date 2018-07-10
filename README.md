@@ -161,6 +161,7 @@ This is the current supported commands tree:
     |- move
 - user
     |- grant
+    |- unset-permissions
 - group
     |- grant
 - hooks

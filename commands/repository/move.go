@@ -59,7 +59,7 @@ func (command *MoveCommand) GetCommand() cli.Command {
 	}
 }
 
-// MoveRepositoryAction use flag values to create a new repository
+// MoveRepositoryAction move or rename a repository
 func (command *MoveCommand) MoveRepositoryAction(context *cli.Context) error {
 	if len(command.flags.project) == 0 {
 		return fmt.Errorf("flag --project is required")
