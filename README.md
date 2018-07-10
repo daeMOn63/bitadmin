@@ -158,6 +158,7 @@ This is the current supported commands tree:
     |- show-permission
     |- enable-sonar-cleanup
     |- set-default-reviewers
+    |- move
 - user
     |- grant
 - group

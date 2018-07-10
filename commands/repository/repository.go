@@ -53,6 +53,11 @@ func (command *Command) GetCommand() cli.Command {
 		flags:    &SetDefaultReviewersCommandFlags{},
 	}
 
+	moveCommand := &MoveCommand{
+		Settings: command.Settings,
+		flags:    &MoveCommandFlags{},
+	}
+
 	return cli.Command{
 		Name:  "repository",
 		Usage: "Repository operations",
@@ -65,6 +70,7 @@ func (command *Command) GetCommand() cli.Command {
 			pullRequestSettingsCommand.GetCommand(),
 			branchingModelCommand.GetCommand(),
 			setDefaultReviewersCommand.GetCommand(),
+			moveCommand.GetCommand(),
 		},
 	}
 }
