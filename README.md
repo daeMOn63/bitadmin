@@ -117,7 +117,7 @@ To not expose your admin password over batch history or process list, it must be
 You can create it like so :
 ```
 $ set +o history
-$ echo -n "password" > ~/.bitadmin_secret
+$ echo -n 'password' > ~/.bitadmin_secret
 $ chmod 600 ~/.bitadmin_secret
 $ set -o history
 ```
@@ -125,7 +125,7 @@ $ set -o history
 File descriptor are also supported in case you don't want to write on disk, just remember to disable history first:
 ```
 $ set +o history
-$ bitadmin --password <(echo -n "mysecret") --user admin --url..
+$ bitadmin --password <(echo -n 'mysecret') --user admin --url..
 ```
 
 From here you should be good to go, try now
