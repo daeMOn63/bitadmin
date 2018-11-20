@@ -19,8 +19,9 @@ func (command *Command) GetCommand() cli.Command {
 		flags:    &CreateCommandFlags{},
 	}
 
-	enableSonarCleanupCommand := &EnableSonarCleanupCommand{
+	sonarCommand := &SonarCommand{
 		Settings: command.Settings,
+		flags:    &SonarCommandFlags{},
 	}
 
 	showPermissionsCommand := &ShowPermissionsCommand{
@@ -63,7 +64,7 @@ func (command *Command) GetCommand() cli.Command {
 		Usage: "Repository operations",
 		Subcommands: []cli.Command{
 			repositoryCreateCommand.GetCommand(),
-			enableSonarCleanupCommand.GetCommand(),
+			sonarCommand.GetCommand(),
 			showPermissionsCommand.GetCommand(),
 			cloneSettingsCommand.GetCommand(),
 			setBranchRestrictionCommand.GetCommand(),
