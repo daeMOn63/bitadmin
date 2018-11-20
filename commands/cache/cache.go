@@ -56,41 +56,81 @@ func (command *Command) WarmupCacheAction(context *cli.Context) error {
 
 	cache := command.Settings.GetFileCache()
 
+	var limit uint
+	var offset uint
+	var isLastPage bool
+
 	cache.Clear()
 
-	maxPagedRequest := bitclient.PagedRequest{
-		Limit: 10000,
-		Start: 0,
-	}
-
 	fmt.Printf("Loading users...")
-	userResponse, err := client.GetUsers(maxPagedRequest)
-	if err != nil {
-		return err
+	limit = 1000
+	offset = uint(0)
+	isLastPage = false
+
+	for !isLastPage {
+		userResponse, err := client.GetUsers(bitclient.PagedRequest{
+			Limit: limit,
+			Start: offset,
+		})
+		if err != nil {
+			return err
+		}
+
+		cache.Users = append(cache.Users, userResponse.Values...)
+
+		isLastPage = userResponse.IsLastPage
+
+		offset += limit
+
 	}
-	cache.Users = userResponse.Values
 	fmt.Println("done")
 	fmt.Printf("Cached %d users\n", len(cache.Users))
 
 	fmt.Printf("Loading projects...")
-	projectResponse, err := client.GetProjects(maxPagedRequest)
-	if err != nil {
-		return err
+	fmt.Printf("Loading users...")
+	limit = 1000
+	offset = uint(0)
+	isLastPage = false
+	for !isLastPage {
+		projectResponse, err := client.GetProjects(bitclient.PagedRequest{
+			Limit: limit,
+			Start: offset,
+		})
+		if err != nil {
+			return err
+		}
+		cache.Projects = append(cache.Projects, projectResponse.Values...)
+
+		isLastPage = projectResponse.IsLastPage
+
+		offset += limit
 	}
-	cache.Projects = projectResponse.Values
 	fmt.Println("done")
 	fmt.Printf("Cached %d projects\n", len(cache.Projects))
 
 	fmt.Printf("Loading repositories...")
 	for _, project := range cache.Projects {
 
-		repositoryResponse, err := client.GetRepositories(project.Key, maxPagedRequest)
+		limit = 1000
+		offset = uint(0)
+		isLastPage = false
 
-		if err != nil {
-			return err
+		for !isLastPage {
+			repositoryResponse, err := client.GetRepositories(project.Key, bitclient.PagedRequest{
+				Limit: limit,
+				Start: offset,
+			})
+
+			if err != nil {
+				return err
+			}
+
+			cache.Repositories = append(cache.Repositories, repositoryResponse.Values...)
+
+			isLastPage = repositoryResponse.IsLastPage
+
+			offset += limit
 		}
-
-		cache.Repositories = append(cache.Repositories, repositoryResponse.Values...)
 	}
 	fmt.Println("done")
 	fmt.Printf("Cached %d repositories\n", len(cache.Repositories))
