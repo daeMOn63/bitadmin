@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/daeMOn63/bitclient"
   packages = ["."]
-  revision = "5abba3462f8b99c64605e2b2e2433cc1cdd303c9"
+  revision = "40e04ed65dbe477612248ca8e70dbdae17feddc7"
 
 [[projects]]
   name = "github.com/dghubble/sling"
@@ -47,7 +47,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "ec83556a53fe16b65c452a104ea9d1e86a671852"
+  revision = "0cf1ed9e522b7dbb416f080a5c8003de9b702bf4"
 
 [solve-meta]
   analyzer-name = "dep"
