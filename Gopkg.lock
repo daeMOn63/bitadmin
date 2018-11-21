@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/daeMOn63/bitclient"
   packages = ["."]
-  revision = "40e04ed65dbe477612248ca8e70dbdae17feddc7"
+  revision = "c45488090c386b7111001cf08cf8037cbab56457"
 
 [[projects]]
   name = "github.com/dghubble/sling"

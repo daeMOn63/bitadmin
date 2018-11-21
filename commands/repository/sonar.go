@@ -21,6 +21,7 @@ type SonarCommandFlags struct {
 	project                      string
 	repository                   string
 	enabled                      bool
+	serverConfigID               int
 	sonarMasterProjectKey        string
 	sonarProjectBaseKey          string
 	analysisMode                 string
@@ -53,6 +54,11 @@ func (command *SonarCommand) GetCommand() cli.Command {
 				Name:        "enabled",
 				Usage:       "Enable the sonar plugin",
 				Destination: &command.flags.enabled,
+			},
+			cli.IntFlag{
+				Name:        "serverConfigID",
+				Usage:       "The server config identifier to use",
+				Destination: &command.flags.serverConfigID,
 			},
 			cli.StringFlag{
 				Name:        "sonarMasterProjectKey",
@@ -111,17 +117,22 @@ func (command *SonarCommand) SonarAction(context *cli.Context) error {
 	if len(command.flags.project) <= 0 {
 		return errors.New("--project flag is required")
 	}
+	if command.flags.serverConfigID <= 0 {
+		return errors.New("--serverConfigID is required")
+	}
+	if len(command.flags.sonarMasterProjectKey) <= 0 {
+		return errors.New("--sonarMasterProjectKey flag is required")
+	}
+	if len(command.flags.sonarProjectBaseKey) <= 0 {
+		return errors.New("--sonarProjectBaseKey flag is required")
+	}
+
 	sonarSettings, _ := client.GetSonarSettings(command.flags.project, command.flags.repository)
 
 	sonarSettings.Project.SonarEnabled = command.flags.enabled
-
-	if len(command.flags.sonarMasterProjectKey) > 0 {
-		sonarSettings.Project.MasterProjectKey = command.flags.sonarMasterProjectKey
-	}
-
-	if len(command.flags.sonarProjectBaseKey) > 0 {
-		sonarSettings.Project.ProjectBaseKey = command.flags.sonarProjectBaseKey
-	}
+	sonarSettings.Project.ServerConfigId = command.flags.serverConfigID
+	sonarSettings.Project.MasterProjectKey = command.flags.sonarMasterProjectKey
+	sonarSettings.Project.ProjectBaseKey = command.flags.sonarProjectBaseKey
 
 	if len(command.flags.analysisMode) > 0 {
 		sonarSettings.Project.AnalysisMode = command.flags.analysisMode
