@@ -156,7 +156,7 @@ This is the current supported commands tree:
     |- set-branching-model
     |- set-pr-settings
     |- show-permission
-    |- enable-sonar-cleanup
+    |- sonar
     |- set-default-reviewers
     |- move
 - user
