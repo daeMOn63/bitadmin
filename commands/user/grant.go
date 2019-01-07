@@ -18,10 +18,11 @@ type GrantCommand struct {
 
 // GrantCommandFlags hold the flag values of the use grant action
 type GrantCommandFlags struct {
-	project    string
-	repository string
-	usernames  cli.StringSlice
-	permission string
+	project     string
+	repository  string
+	usernames   cli.StringSlice
+	permission  string
+	masterMerge bool
 }
 
 // GetCommand provide a ready to use cli.Command
@@ -50,6 +51,11 @@ func (command *GrantCommand) GetCommand() cli.Command {
 				Name:        "permission",
 				Usage:       "The `<permission>` level the user will have (one of REPO_READ, REPO_WRITE, REPO_ADMIN)",
 				Destination: &command.flags.permission,
+			},
+			cli.BoolFlag{
+				Name:        "masterMerge",
+				Usage:       "Allow the user to merge on master branch",
+				Destination: &command.flags.masterMerge,
 			},
 		},
 		BashComplete: func(c *cli.Context) {
@@ -110,5 +116,77 @@ func (command *GrantCommand) GrantAction(context *cli.Context) error {
 		)
 	}
 
+	if command.flags.masterMerge {
+		newRestriction := bitclient.SetRepositoryBranchRestrictionsRequest{
+			Type: "read-only",
+			Matcher: bitclient.Matcher{
+				Id:        "refs/heads/master",
+				DisplayId: "master",
+				Active:    true,
+				Type:      bitclient.MatcherType{Id: "BRANCH", Name: "Branch"},
+			},
+			Users: command.flags.usernames,
+		}
+
+		getRequestParams := bitclient.GetRepositoryBranchRestrictionRequest{Type: "read-only"}
+		restrictions, err := client.GetRepositoryBranchRestrictions(command.flags.project, command.flags.repository, getRequestParams)
+		if err != nil {
+			return err
+		}
+
+		if len(restrictions) != 1 {
+			return fmt.Errorf("invalid restrictions count, expected 1, got %d", len(restrictions))
+		}
+
+		restriction := restrictions[0]
+
+		var origUserSlugs []string
+		for _, u := range restriction.Users {
+			// We can remove inactive user accounts
+			if u.Active == true {
+				origUserSlugs = append(origUserSlugs, u.Slug)
+			}
+		}
+
+		// Keep same matcher
+		newRestriction.Id = restriction.Id
+		newRestriction.Matcher = restriction.Matcher
+		newRestriction.Users = merge(newRestriction.Users, origUserSlugs)
+		newRestriction.Groups = restriction.Groups
+
+		err = client.SetRepositoryBranchRestrictions(command.flags.project, command.flags.repository, newRestriction)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf(
+			"[OK] granted %s/%s master merge for %v\n",
+			command.flags.project,
+			command.flags.repository,
+			command.flags.usernames,
+		)
+	}
+
 	return nil
+}
+
+// merge two string slices removing duplicates values
+func merge(s1, s2 []string) []string {
+	r := append([]string(nil), s1...)
+
+	for _, s := range s2 {
+		exists := false
+		for _, e := range r {
+			if s == e {
+				exists = true
+				break
+			}
+		}
+
+		if exists == false {
+			r = append(r, s)
+		}
+	}
+
+	return r
 }
