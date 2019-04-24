@@ -7,6 +7,11 @@ import (
 	"github.com/daeMOn63/bitadmin/helper"
 	"github.com/daeMOn63/bitadmin/settings"
 	"github.com/urfave/cli"
+	"encoding/json"
+	"github.com/daeMOn63/bitclient"
+	"github.com/google/go-cmp/cmp"
+	"strings"
+	"unicode"
 )
 
 const yaccHookKey = "com.isroot.stash.plugin.yacc:yaccHook"
@@ -29,12 +34,18 @@ func (command *YaccHookCommand) GetCommand() cli.Command {
 		flags:    &YaccHookDisableCommandFlags{},
 	}
 
+	yaccHookSettingsCommand := YaccHookSettingsCommand{
+		Settings: command.Settings,
+		flags:    &YaccHookGetSettingsCommandFlags{},
+	}
+
 	return cli.Command{
 		Name:  "yet-another-commit-checker",
 		Usage: "Yet Another Commit Checker hook operations",
 		Subcommands: []cli.Command{
 			yaccEnableCommand.GetCommand(),
 			yaccDisableCommand.GetCommand(),
+			yaccHookSettingsCommand.GetCommand(),
 		},
 	}
 }
@@ -295,4 +306,158 @@ func (command *YaccHookDisableCommand) DisableAction(context *cli.Context) error
 	fmt.Printf("[OK] Disabled yacc hook on %s/%s\n", command.flags.project, command.flags.repository)
 
 	return nil
+}
+
+// YaccHookSettingsCommand define the command to get setting for YACC hook
+type YaccHookSettingsCommand struct {
+	Settings *settings.BitAdminSettings
+	flags    *YaccHookGetSettingsCommandFlags
+}
+
+// YaccHookGetSettingsCommandFlags define the flags of the YaccHookSettingsCommand
+type YaccHookGetSettingsCommandFlags struct {
+	project    string
+	repository string
+}
+
+// GetCommand provide a ready to use cli.Command
+func (command *YaccHookSettingsCommand) GetCommand() cli.Command {
+	return cli.Command{
+		Name:   "get-settings",
+		Usage:  "Get settings for Yet Another Commit Checker hook",
+		Action: command.GetSettings,
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:        "project",
+				Usage:       "The `<project_key>` where the repository will be created",
+				Destination: &command.flags.project,
+			},
+			cli.StringFlag{
+				Name:        "repository",
+				Usage:       "The `<repository_name>` to create",
+				Destination: &command.flags.repository,
+			},
+		},
+		BashComplete: func(c *cli.Context) {
+			helper.AutoComplete(c, command.Settings.GetFileCache())
+		},
+	}
+}
+
+// GetSettings contains logic to get current yacc settings
+func (command *YaccHookSettingsCommand) GetSettings(context *cli.Context) error {
+	client, err := command.Settings.GetAPIClient()
+	if err != nil {
+		return err
+	}
+
+	if len(command.flags.project) <= 0 {
+		return errors.New("--project flag is required")
+	}
+	if len(command.flags.repository) <= 0 {
+		return errors.New("--repository flag is required")
+	}
+
+
+	yacc, err := GetHookSettings(
+		command.flags.project,
+		command.flags.repository,
+		yaccHookKey,
+		client,
+	)
+	if err != nil {
+		return err
+	}
+
+	data, err := json.Marshal(yacc)
+	if err != nil {
+		return err
+	}
+
+	isCorrect  := "NO"
+	isOK, diff := isYACCSettingsCorrectWithDiff(yacc)
+
+	if isOK == true {
+		isCorrect = "YES"
+	}
+
+	fmt.Printf("%s# %s# %s", isCorrect, data, diff.String())
+
+	return nil
+}
+
+// GetHookSettings return the YACC hook settings from bitbucket
+func GetHookSettings(projectKey, repositorySlug string, hookKey string, bc *bitclient.BitClient) (YaccSettings, error) {
+	response := YaccSettings{}
+
+	_, err := bc.DoGet(
+		fmt.Sprintf("/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey, repositorySlug, hookKey),
+		nil,
+		&response,
+	)
+
+	return response, err
+}
+
+// isYACCSettingsCorrectWithDiff Compares YACC hook settings for a repository and check whether these are matching the desired default settings
+func isYACCSettingsCorrectWithDiff(yaccSettings YaccSettings) (bool, DiffReporter) {
+	defaultYACCSettings := YaccSettings {
+		RequireMatchingAuthorEmail: true,
+		RequireMatchingAuthorName: true,
+		RequireJiraIssue: true,
+		ExcludeMergeCommits: true,
+		IssueJqlMatcher: "issuetype in (Bug, \"BUG sub-task\", \"Spike Story\", Release, Story, Task, Investigation) AND status != Closed",
+		ErrorMessageIssueJQL: "Commits with this ticket ID are forbidden. Your ticket must be one of: Spike Story, Story, Bug, BUG sub-task, Release, Task or Investigation, and status != Closed",
+	}
+
+	opts := cmp.Transformer("StripWhitespace", func(x YaccSettings) YaccSettings {
+		temp := x
+		temp.IssueJqlMatcher = SpaceStringsBuilder(x.IssueJqlMatcher)
+		temp.ErrorMessageIssueJQL = SpaceStringsBuilder(x.ErrorMessageIssueJQL)
+
+		return temp
+	})
+
+	var r DiffReporter
+	cmp.Diff(defaultYACCSettings, yaccSettings, cmp.Reporter(&r))
+
+	return cmp.Equal(defaultYACCSettings, yaccSettings, opts), r
+}
+
+// SpaceStringsBuilder Strips whitespace from a string
+func SpaceStringsBuilder(str string) string {
+	var b strings.Builder
+	b.Grow(len(str))
+	for _, ch := range str {
+		if !unicode.IsSpace(ch) {
+			b.WriteRune(ch)
+		}
+	}
+	return b.String()
+}
+
+// DiffReporter is a simple custom reporter that only records differences
+// detected during comparison.
+type DiffReporter struct {
+	path  cmp.Path
+	diffs []string
+}
+
+func (r *DiffReporter) PushStep(ps cmp.PathStep) {
+	r.path = append(r.path, ps)
+}
+
+func (r *DiffReporter) Report(rs cmp.Result) {
+	if !rs.Equal() {
+		vx, vy := r.path.Last().Values()
+		r.diffs = append(r.diffs, fmt.Sprintf("%v:-: %v+: %v\n", r.path, vx, vy))
+	}
+}
+
+func (r *DiffReporter) PopStep() {
+	r.path = r.path[:len(r.path)-1]
+}
+
+func (r *DiffReporter) String() string {
+	return strings.Join(r.diffs, "\n")
 }
