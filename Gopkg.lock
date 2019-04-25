@@ -2,13 +2,12 @@
 
 
 [[projects]]
-  branch = "yacc-hook-settings-request"
+  branch = "master"
   digest = "1:b9a5f743214ccb69c6072c7d0ee9518049b7c821ba844453d2739de57a7c043c"
   name = "github.com/daeMOn63/bitclient"
   packages = ["."]
   pruneopts = ""
-  revision = "d52a1bf4f4a965005d36e2b46654a6487be04377"
-  source = "github.com/ktsirkou/bitclient"
+  revision = "bfee94efac35a624089df7c1c0c22fa6fa2c45c8"
 
 [[projects]]
   digest = "1:fbf696b8af25bb4a791792b90cab2cfea212fac0ac0307ef72c298c5ebc1638b"
