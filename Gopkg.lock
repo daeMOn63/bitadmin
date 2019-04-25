@@ -2,12 +2,13 @@
 
 
 [[projects]]
-  branch = "master"
-  digest = "1:d196206a663506807d64eecf8f613fb61e0ce52fbe7c00a2937003cd00a680fb"
+  branch = "yacc-hook-settings-request"
+  digest = "1:b9a5f743214ccb69c6072c7d0ee9518049b7c821ba844453d2739de57a7c043c"
   name = "github.com/daeMOn63/bitclient"
   packages = ["."]
   pruneopts = ""
-  revision = "0cec735aad83d6240c9809f0b0858ae62180fb93"
+  revision = "d52a1bf4f4a965005d36e2b46654a6487be04377"
+  source = "github.com/ktsirkou/bitclient"
 
 [[projects]]
   digest = "1:fbf696b8af25bb4a791792b90cab2cfea212fac0ac0307ef72c298c5ebc1638b"
@@ -73,11 +74,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:65b26625b8071c34051fdc3933aa41aabba2172296f325428e3a6492b0e7691f"
+  digest = "1:033d3fdc1e3ca60a53c5cf308598b85244c91289c28f8b32eb6486601d82b3b5"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = ""
-  revision = "953cdadca894cdc07be76fc99f95b40c28f06623"
+  revision = "9f0b1ff7b46a4014ddb5d4bdb6602a43b882cb27"
 
 [solve-meta]
   analyzer-name = "dep"

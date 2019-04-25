@@ -22,8 +22,9 @@
 
 
 [[constraint]]
-  branch = "master"
+  branch = "yacc-hook-settings-request"
   name = "github.com/daeMOn63/bitclient"
+  source = "github.com/ktsirkou/bitclient"
 
 [[constraint]]
   name = "github.com/urfave/cli"

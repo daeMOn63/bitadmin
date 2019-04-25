@@ -176,6 +176,8 @@ This is the current supported commands tree:
     |- yet-another-commit-checker
         |- enable
         |- disable
+        |- get-settings
+        |- diff-settings
     |- reject-force-push
         |- enable
         |- disable
